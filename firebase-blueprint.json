@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "profiles": {
+      "title": "User Profile",
+      "description": "User profile information and ranch-level roles.",
+      "type": "object",
+      "properties": {
+        "full_name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["super_admin", "admin", "manager", "staff", "vet"] },
+        "is_active": { "type": "boolean" }
+      },
+      "required": ["full_name", "email", "role"]
+    },
+    "animals": {
+      "title": "Animal",
+      "description": "Core animal record.",
+      "type": "object",
+      "properties": {
+        "tag_number": { "type": "string" },
+        "species": { "type": "string" },
+        "breed": { "type": "string" },
+        "sex": { "type": "string", "enum": ["male", "female"] },
+        "birth_date": { "type": "string", "format": "date" },
+        "status": { "type": "string", "enum": ["active", "sold", "dead", "culled", "archived"] },
+        "current_group_id": { "type": "string" },
+        "weight_kg": { "type": "number" },
+        "withdrawal_status": { "type": "boolean" }
+      },
+      "required": ["tag_number", "species", "breed", "sex", "status"]
+    },
+    "animal_groups": {
+      "title": "Animal Group",
+      "description": "Groups for organizing animals.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "purpose": { "type": "string" },
+        "location": { "type": "string" }
+      },
+      "required": ["name"]
+    },
+    "treatments": {
+      "title": "Treatment",
+      "description": "Medical treatment records.",
+      "type": "object",
+      "properties": {
+        "animal_id": { "type": "string" },
+        "medicine_id": { "type": "string" },
+        "dosage": { "type": "string" },
+        "treatment_date": { "type": "string", "format": "date" },
+        "withdrawal_days": { "type": "integer" },
+        "withdrawal_end_date": { "type": "string", "format": "date" }
+      },
+      "required": ["treatment_date"]
+    },
+    "notes": {
+      "title": "Note",
+      "description": "Ranch notes and reminders.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "reminder_at": { "type": "string", "format": "date-time" },
+        "is_pinned": { "type": "boolean" }
+      },
+      "required": ["content"]
+    }
+  },
+  "firestore": {
+    "/profiles/{userId}": {
+      "schema": "profiles",
+      "description": "User profiles indexed by Auth UID."
+    },
+    "/animals/{animalId}": {
+      "schema": "animals",
+      "description": "Individual animal records."
+    },
+    "/groups/{groupId}": {
+      "schema": "animal_groups",
+      "description": "Animal groups."
+    },
+    "/treatments/{treatmentId}": {
+      "schema": "treatments",
+      "description": "Treatment records."
+    },
+    "/notes/{noteId}": {
+      "schema": "notes",
+      "description": "Ranch notes."
+    }
+  }
+}

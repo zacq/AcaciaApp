@@ -1,0 +1,7 @@
+{
+  "name": "AcaciaVeld RanchOS",
+  "description": "A comprehensive ranch operations management system for livestock breeding, health tracking, and operational reporting.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

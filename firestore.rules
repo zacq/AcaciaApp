@@ -1,0 +1,98 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // Collection: profiles
+    // Fields: full_name (string), email (string), role (string), is_active (bool)
+    //
+    // Collection: animals
+    // Fields: tag_number (string), species (string), breed (string), sex (string), status (string), weight_kg (number)
+    //
+    // Collection: groups
+    // Fields: name (string), purpose (string), location (string)
+    //
+    // Collection: treatments
+    // Fields: animal_id (string), medicine_id (string), dosage (string), treatment_date (string)
+    //
+    // Collection: notes
+    // Fields: title (string), content (string), reminder_at (string), is_pinned (bool)
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/profiles/$(request.auth.uid)).data.role in ['admin', 'super_admin'] ||
+         (request.auth.token.email == "zacqael4@gmail.com" && request.auth.token.email_verified == true));
+    }
+
+    function isValidEmail(email) {
+      return email is string && email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    function isValidProfile(data) {
+      return data.keys().hasAll(['full_name', 'email', 'role']) &&
+             data.full_name is string && data.full_name.size() > 0 && data.full_name.size() < 100 &&
+             isValidEmail(data.email) &&
+             data.role in ['super_admin', 'admin', 'manager', 'staff', 'vet'];
+    }
+
+    function isValidAnimal(data) {
+      return data.keys().hasAll(['tag_number', 'species', 'breed', 'sex', 'status']) &&
+             data.tag_number is string && data.tag_number.size() > 0 && data.tag_number.size() < 50 &&
+             data.sex in ['male', 'female'] &&
+             data.status in ['active', 'sold', 'dead', 'culled', 'archived'];
+    }
+
+    // ===============================================================
+    // Rules
+    // ===============================================================
+
+    match /profiles/{userId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidProfile(request.resource.data) && (isOwner(userId) || isAdmin());
+      allow update: if isAuthenticated() && isValidProfile(request.resource.data) && (isOwner(userId) || isAdmin());
+    }
+
+    match /animals/{animalId} {
+      allow read: if isAuthenticated();
+      allow create: if isAuthenticated() && isValidAnimal(request.resource.data);
+      allow update: if isAuthenticated() && isValidAnimal(request.resource.data);
+      allow delete: if isAdmin();
+    }
+
+    match /groups/{groupId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    match /treatments/{treatmentId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAdmin();
+    }
+
+    match /notes/{noteId} {
+      allow read: if isAuthenticated();
+      allow create, update: if isAuthenticated();
+      allow delete: if isAuthenticated();
+    }
+  }
+}
