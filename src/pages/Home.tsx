@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Stethoscope, 
-  Activity, 
-  BarChart3, 
-  Users, 
-  ArrowLeftRight, 
-  Baby, 
-  Scan, 
+import {
+  Stethoscope,
+  Activity,
+  BarChart3,
+  Users,
+  ArrowLeftRight,
+  Baby,
+  Scan,
   Scissors,
   Plus,
   ClipboardList
@@ -47,15 +47,17 @@ export default function Home() {
     <div className="p-6 max-w-4xl mx-auto space-y-8">
       {/* Hero Section */}
       <section className="text-center py-8">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="inline-block mb-4"
         >
           <div className="relative">
-            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
-              <Users size={40} className="text-primary" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="AcaciaVelds Logo"
+              className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-surface"
+            />
             <div className="absolute -top-2 -right-2 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-4 border-background">
               {animalCount ?? 0}
             </div>
