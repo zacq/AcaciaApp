@@ -144,7 +144,7 @@ export default function Layout() {
             >
               <div className="p-6 border-b border-accent flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-serif font-bold text-xl">A</div>
+                  <img src="/logo.png" alt="AcaciaVeld" className="w-10 h-10 rounded-xl object-cover" />
                   <span className="text-xl font-serif font-bold text-primary">AcaciaVeld</span>
                 </div>
                 <button onClick={() => setIsSidebarOpen(false)} className="p-2 hover:bg-accent rounded-xl">
