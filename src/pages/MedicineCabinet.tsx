@@ -1,15 +1,18 @@
 import React from 'react';
 import { Briefcase, Plus, Search, AlertCircle } from 'lucide-react';
+import PageHeader from '../components/PageHeader';
 
 export default function MedicineCabinet() {
   return (
     <div className="p-4 space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-serif text-primary">Medicine Cabinet</h2>
-        <button className="p-2 bg-primary text-white rounded-xl shadow-lg shadow-primary/20">
-          <Plus size={24} />
-        </button>
-      </div>
+      <PageHeader
+        title="Medicine Cabinet"
+        action={
+          <button className="p-2 bg-primary text-white rounded-xl shadow-lg shadow-primary/20">
+            <Plus size={24} />
+          </button>
+        }
+      />
 
       <div className="relative">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light/40" size={20} />

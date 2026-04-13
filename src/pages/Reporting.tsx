@@ -1,13 +1,14 @@
 import React from 'react';
-import { 
-  Users, 
-  Briefcase, 
-  Stethoscope, 
-  Activity, 
-  ArrowLeftRight, 
-  Weight, 
-  Tag, 
-  Skull, 
+import { Link } from 'react-router-dom';
+import {
+  Users,
+  Briefcase,
+  Stethoscope,
+  Activity,
+  ArrowLeftRight,
+  Weight,
+  Tag,
+  Skull,
   ClipboardList,
   Baby,
   Trash2,
@@ -39,14 +40,15 @@ const reports = [
 
 export default function Reporting() {
   return (
-    <div className="p-4 space-y-6">
+    <div className="p-4 space-y-6 max-w-2xl mx-auto">
       <h2 className="text-2xl font-serif text-primary">Reporting</h2>
-      
+
       <div className="space-y-2">
         {reports.map((report) => (
-          <button 
+          <Link
             key={report.label}
-            className="w-full card flex items-center justify-between py-4 group hover:bg-accent/20"
+            to={report.path}
+            className="w-full card flex items-center justify-between py-4 group hover:bg-accent/20 block"
           >
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-primary/5 rounded-xl flex items-center justify-center text-primary-light group-hover:text-primary transition-colors">
@@ -55,7 +57,7 @@ export default function Reporting() {
               <span className="font-bold text-primary-dark">{report.label}</span>
             </div>
             <ChevronRight size={20} className="text-accent group-hover:text-primary transition-colors" />
-          </button>
+          </Link>
         ))}
       </div>
     </div>

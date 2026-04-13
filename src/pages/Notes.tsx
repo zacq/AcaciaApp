@@ -23,11 +23,11 @@ export default function Notes() {
   }, []);
 
   const handleSaveNote = async () => {
-    if (!newNote.trim() || !user) return;
+    if (!newNote.trim()) return;
     try {
       await addDoc(collection(db, 'notes'), {
         content: newNote,
-        created_by: user.uid,
+        created_by: 'local',
         created_at: new Date().toISOString(),
         is_pinned: false
       });

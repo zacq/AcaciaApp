@@ -1,0 +1,2284 @@
+///////////////////prd//////////////
+
+---
+
+# Product Requirements Document
+
+## AcaciaVeld Ranch Operations Web App
+
+**Version:** 1.0
+**Platform:** React Web App
+**Backend:** Supabase
+**Brand Theme:** Green and White
+**Primary Goal:** Centralize ranch activity data collection, flock management, treatment records, breeding records, reporting, and operational notes in one system.
+
+---
+
+## 1. Product Overview
+
+**AcaciaVeld** is a ranch operations web app designed to help livestock breeders and ranch managers collect, organize, and act on operational data across the ranch.
+
+The app will digitize key livestock workflows including:
+
+* flock registration
+* animal grouping
+* treatment tracking
+* health monitoring
+* breeding records
+* lambing records
+* pregnancy scan tracking
+* movement logging
+* weight/performance tracking
+* note-taking and reminders
+* ranch reporting
+
+This product should feel like a **field-ready livestock control center**, not a generic admin dashboard.
+
+---
+
+## 2. Product Vision
+
+Build a web application that allows AcaciaVeld staff to:
+
+* record livestock activities in real time
+* manage animal-level and group-level data
+* monitor breeding and health events
+* generate useful ranch reports
+* reduce paper-based errors
+* improve traceability across the ranch
+* support operational decision-making with accurate records
+
+The app should be simple enough for daily use, but strong enough to become the ranch’s operational memory.
+
+---
+
+## 3. Core Objectives
+
+### Primary Objectives
+
+* Create a central ranch data system
+* Make livestock records searchable and structured
+* Simplify daily activity logging
+* Generate operational and breeding reports
+* Improve visibility into animal health, reproduction, and sales readiness
+
+### Secondary Objectives
+
+* Reduce data loss from manual recordkeeping
+* Improve follow-up on treatments, pregnancy scans, and lambing
+* Create a clean base for future automation, analytics, and mobile expansion
+
+---
+
+## 4. Target Users
+
+### Ranch Owner / Admin
+
+Needs full oversight across all operations, reports, breeding performance, medicine usage, and sales-ready stock.
+
+### Farm Manager
+
+Needs to supervise flock structure, movements, treatments, lambing, and team activity.
+
+### Field Staff / Data Entry Personnel
+
+Needs simple forms for entering daily events quickly.
+
+### Vet / Breeding Specialist
+
+Needs access to treatment, pregnancy scan, lambing, and breeding history.
+
+---
+
+## 5. Product Scope
+
+The application will be a **React-based responsive web app** with Supabase powering:
+
+* authentication
+* PostgreSQL database
+* row-level security
+* storage for animal images and documents
+* server functions for advanced workflows
+* notifications/reminders logic where needed
+
+---
+
+## 6. Design Foundation from Screenshots
+
+The screenshots suggest a practical UX model that should be preserved:
+
+### Existing Interface Patterns Observed
+
+* simple top bar with hamburger navigation
+* bottom navigation with core modules
+* floating action button for creating records
+* clean card-based actions
+* lightweight reporting screens
+* notes + reminder capture
+* flock and group views
+* side menu for secondary modules
+
+### Design Direction for AcaciaVeld
+
+The UI should evolve from the screenshot model into a more polished brand-specific product:
+
+* **Primary colors:** green and white
+* use logo-inspired green as dominant action color
+* white/light gray backgrounds for clarity
+* rounded cards and soft shadows
+* clean typography
+* fast-entry forms
+* mobile-first layout, but optimized for desktop web use
+
+### Suggested Brand Tokens
+
+* Primary Green: derived from logo
+* Dark Green: for headers / active states
+* Soft Green Tint: for cards / chips / tabs
+* White: main background
+* Light Gray: secondary background
+* Black/Charcoal: text
+
+---
+
+## 7. Information Architecture
+
+## Main Navigation
+
+Bottom or side nav should include:
+
+1. Home
+2. Flock
+3. Reporting
+4. Notes
+5. Add Record button
+
+## Secondary Navigation / Menu Drawer
+
+Based on screenshot structure:
+
+* Contacts
+* Medicine Cabinet
+* Medicine Disposal
+* My Account
+* Archive Flock
+* Animal Breeds
+* User Guide
+* Log Out
+
+---
+
+## 8. Core Modules
+
+# 8.1 Home Dashboard
+
+### Purpose
+
+Provide an at-a-glance ranch snapshot.
+
+### Key Elements
+
+* total animals in flock
+* animals by group
+* recent treatments
+* upcoming lambings
+* pregnancy scan due / completed
+* animals in withdrawal
+* expired medicines alert
+* medicines due to expire
+* recent notes
+* quick actions grid
+
+### Home Quick Action Cards
+
+Based on screenshots:
+
+* Treatments
+* Health
+* Performance
+* Breeding
+* Movements
+* Lambing
+* Pregnancy Scan
+* Weaning
+
+### Functional Requirements
+
+* cards should open record creation flow
+* dashboard metrics should update live from Supabase
+* users should be able to filter dashboard by ranch, species, or group later
+
+---
+
+# 8.2 Flock Module
+
+### Purpose
+
+Manage all animals and group structures.
+
+### Screens
+
+* All Animals
+* Groups
+* Animal Profile
+* Add New Animal
+* Edit Animal
+* Archive Animal
+
+### Animal Core Data
+
+Each animal should support:
+
+* internal ID
+* tag number / ear tag
+* species
+* breed
+* sex
+* date of birth
+* source
+* acquisition date
+* sire
+* dam
+* current group
+* status
+* weight
+* breeding status
+* pregnancy status
+* health status
+* notes
+* image(s)
+
+### Group Management
+
+Users should be able to:
+
+* create groups
+* assign animals to groups
+* move animals between groups
+* view all animals in a group
+* archive inactive groups
+
+### Animal Profile Tabs
+
+Each animal profile should include:
+
+* Overview
+* Treatments
+* Health
+* Breeding
+* Lambing
+* Pregnancy Scans
+* Movements
+* Weights / Performance
+* Notes
+* Attachments
+
+---
+
+# 8.3 Treatments Module
+
+### Purpose
+
+Track all administered treatments, drugs, and follow-ups.
+
+### Data Fields
+
+* animal or group
+* treatment type
+* drug / medicine used
+* dosage
+* route
+* date administered
+* administered by
+* reason / diagnosis
+* withdrawal period
+* next follow-up date
+* notes
+
+### Functional Requirements
+
+* support single-animal treatment
+* support batch/group treatment
+* calculate withdrawal end date automatically
+* display animals currently in withdrawal
+* link medicines to Medicine Cabinet inventory
+
+---
+
+# 8.4 Health Module
+
+### Purpose
+
+Capture general health observations and health assessments.
+
+### Data Types
+
+* health assessment
+* symptoms
+* injuries
+* disease observations
+* mortality events
+* vet recommendations
+* recovery status
+
+### Functional Requirements
+
+* log health event against animal or group
+* classify severity
+* attach notes/photos
+* mark case open/closed
+* connect health events to treatment records
+
+---
+
+# 8.5 Performance Module
+
+### Purpose
+
+Track growth and production indicators.
+
+### Data Fields
+
+* weight
+* date weighed
+* age at weighing
+* body condition score
+* growth notes
+* production remarks
+
+### Functional Requirements
+
+* view weight history by animal
+* compare animals by group
+* generate weight recording report
+* flag slow-performing animals
+
+---
+
+# 8.6 Breeding Module
+
+### Purpose
+
+Track breeding activity and improve genetic planning.
+
+### Data Fields
+
+* breeding date
+* sire
+* dam / ewe / doe
+* mating type
+* expected due date
+* breeding technician / handler
+* breeding notes
+* outcome
+
+### Functional Requirements
+
+* assign sire and dam from registered animals
+* calculate expected lambing/kidding date
+* track repeat breeding
+* show breeding history per animal
+* support imported / external sire references if needed
+
+---
+
+# 8.7 Lambing Module
+
+### Purpose
+
+Track births and reproductive outcomes.
+
+### Data Fields
+
+* mother animal
+* sire
+* lambing date
+* number born
+* born alive
+* stillbirth count
+* sex of offspring
+* birth weights
+* complications
+* assistance provided
+* notes
+
+### Functional Requirements
+
+* create new offspring records directly from lambing event
+* link offspring to dam and sire
+* generate lambing record reports
+* support multiple births
+
+---
+
+# 8.8 Pregnancy Scan Module
+
+### Purpose
+
+Track reproductive confirmation and scan results.
+
+### Data Fields
+
+* animal
+* scan date
+* result
+* estimated gestation age
+* expected due date
+* technician / vet
+* remarks
+
+### Functional Requirements
+
+* store positive/negative/inconclusive results
+* update pregnancy status on animal profile
+* generate pregnancy scan report
+* show upcoming due dates
+
+---
+
+# 8.9 Movements Module
+
+### Purpose
+
+Track movement of animals across groups, pens, paddocks, sale staging, quarantine, and archive.
+
+### Movement Types
+
+* group transfer
+* paddock shift
+* quarantine
+* sales prep
+* purchase arrival
+* disposal / exit
+* death
+
+### Data Fields
+
+* animal/group
+* from location/group
+* to location/group
+* date
+* reason
+* authorized by
+* notes
+
+### Functional Requirements
+
+* record individual or group movements
+* show latest location/group on animal profile
+* generate movement reports
+
+---
+
+# 8.10 Weaning Module
+
+### Purpose
+
+Track weaning events and post-weaning grouping.
+
+### Data Fields
+
+* offspring animal
+* dam
+* weaning date
+* age at weaning
+* weight at weaning
+* target group after weaning
+* notes
+
+### Functional Requirements
+
+* batch weaning support
+* update animal status after weaning
+* contribute to performance reporting
+
+---
+
+# 8.11 Notes Module
+
+### Purpose
+
+Allow field notes, reminders, and freeform ranch observations.
+
+### Features from screenshots to preserve
+
+* large note input
+* date/time stamp
+* reminder option
+* searchable notes list
+
+### Data Fields
+
+* title
+* note content
+* created by
+* created at
+* reminder date/time
+* linked animal/group/module
+* status
+
+### Functional Requirements
+
+* create note
+* save reminder
+* search notes
+* pin important notes
+* optionally assign note to animal or group
+
+---
+
+# 8.12 Reporting Module
+
+### Purpose
+
+Provide structured operational reports.
+
+### Reports observed in screenshots
+
+The system should support:
+
+* Animals in Flock
+* Animals by Group
+* Medicines Purchased
+* Treatments
+* Service Report
+* Movements
+* Weight Recording
+* Replaced Tags
+* Mortality Report
+* Health Assessment Report
+* Animals Born on Farm
+* Lambing Record
+* Cull Report
+* Sales Catalogue Report
+* Pregnancy Scan Report
+* Expired Medicines
+* Medicines Due to Expire
+* Animals in Withdrawal
+
+### Reporting Requirements
+
+* filter by date range
+* filter by breed
+* filter by species
+* filter by group
+* export CSV/PDF
+* search within report
+* sort columns
+* summary totals at top
+
+---
+
+# 8.13 Medicine Cabinet Module
+
+### Purpose
+
+Manage ranch medicine inventory.
+
+### Data Fields
+
+* medicine name
+* category
+* batch number
+* quantity
+* unit
+* purchase date
+* expiry date
+* supplier
+* cost
+* storage notes
+
+### Functional Requirements
+
+* create medicine inventory
+* reduce stock when used in treatment
+* flag low stock
+* flag expired medicines
+* flag medicines due to expire
+* generate medicine purchase report
+
+---
+
+# 8.14 Medicine Disposal Module
+
+### Purpose
+
+Track proper disposal of expired or unused medicines.
+
+### Data Fields
+
+* medicine
+* quantity disposed
+* disposal date
+* reason
+* disposal method
+* authorized by
+* notes
+
+### Functional Requirements
+
+* link to medicine inventory
+* reduce available stock
+* generate disposal history
+
+---
+
+# 8.15 Contacts Module
+
+### Purpose
+
+Store key operational contacts.
+
+### Contact Types
+
+* vet
+* supplier
+* breeding consultant
+* transporter
+* buyer
+* ranch staff
+* regulator / service provider
+
+### Data Fields
+
+* name
+* company
+* phone
+* email
+* role
+* notes
+
+---
+
+# 8.16 Animal Breed Module
+
+### Purpose
+
+Maintain a controlled breed library.
+
+### Data Fields
+
+* breed name
+* species
+* description
+* notes
+
+### Functional Requirements
+
+* used in animal creation forms
+* editable by admins only
+
+---
+
+# 8.17 Archive Flock Module
+
+### Purpose
+
+Retain historical animal records without cluttering active flock.
+
+### Archive Reasons
+
+* sold
+* culled
+* died
+* transferred
+* retired breeding stock
+
+### Functional Requirements
+
+* archived animals remain searchable
+* historical records stay attached
+* admins can restore if needed
+
+---
+
+## 9. User Roles and Permissions
+
+### Super Admin
+
+* full access
+* system settings
+* user management
+* all reports
+* deletes / archive control
+
+### Admin / Manager
+
+* create and edit operational records
+* manage animals/groups
+* view reports
+* manage notes and reminders
+
+### Data Entry / Staff
+
+* create records
+* update assigned data
+* limited reporting access
+* no destructive admin actions
+
+### Vet / Specialist
+
+* treatment, health, breeding, pregnancy access
+* limited access to financial/admin data
+
+Supabase Row Level Security should enforce permissions.
+
+---
+
+## 10. Functional Flows
+
+## 10.1 Add Animal
+
+1. Click floating add button
+2. Select “New Animal”
+3. Complete form
+4. Save to Supabase
+5. Animal appears in flock and group
+
+## 10.2 Log Treatment
+
+1. Open Treatments
+2. Select animal or group
+3. Enter medicine + dosage + date
+4. Save
+5. System updates withdrawal status if needed
+
+## 10.3 Record Breeding
+
+1. Open Breeding
+2. Select female animal
+3. Assign sire
+4. Enter breeding details
+5. Save
+6. Expected due date is auto-calculated
+
+## 10.4 Record Lambing
+
+1. Open Lambing
+2. Select mother
+3. Enter birth details
+4. Save
+5. Option to create offspring animal profiles immediately
+
+## 10.5 Save Note with Reminder
+
+1. Open Notes
+2. Write note
+3. Add reminder date/time
+4. Save
+5. Reminder stored for dashboard / notification logic
+
+---
+
+## 11. Non-Functional Requirements
+
+### Performance
+
+* app should feel fast on average rural/mobile internet
+* key screens should load under 2 to 3 seconds where possible
+
+### Responsiveness
+
+* mobile-first
+* tablet-friendly
+* desktop support for managers/admins
+
+### Offline Consideration
+
+Phase 1 may not be fully offline, but UX should prepare for later offline sync support.
+
+### Security
+
+* Supabase Auth
+* Row Level Security
+* audit timestamps
+* safe file upload controls
+
+### Reliability
+
+* soft delete for important records
+* activity logs for critical updates
+
+---
+
+## 12. Suggested Tech Stack
+
+### Frontend
+
+* React
+* Vite or Next.js
+* Tailwind CSS
+* React Router
+* React Hook Form
+* Zod
+* TanStack Query
+* Recharts for data visualization
+
+### Backend
+
+* Supabase Auth
+* Supabase Postgres
+* Supabase Storage
+* Supabase Edge Functions
+* Supabase Realtime where useful
+
+### Optional Utilities
+
+* dayjs
+* react-table / TanStack Table
+* react-hot-toast
+* framer-motion for light animation
+
+---
+
+## 13. Database Design Overview
+
+## Core Tables
+
+* users
+* ranches
+* animals
+* animal_groups
+* group_memberships
+* breeds
+* treatments
+* health_events
+* breeding_records
+* lambing_records
+* pregnancy_scans
+* movements
+* weights
+* weaning_records
+* notes
+* reminders
+* medicines
+* medicine_purchases
+* medicine_disposals
+* contacts
+* archived_animals
+* audit_logs
+
+## Important Relationships
+
+* animal belongs to breed
+* animal belongs to current group
+* animal has many treatments
+* animal has many health events
+* animal has many breeding records
+* animal may be sire/dam in lambing records
+* medicine is referenced by treatments and disposals
+
+---
+
+## 14. Dashboard Metrics
+
+The dashboard should support widgets such as:
+
+* total active animals
+* animals by species
+* animals by breed
+* animals by group
+* upcoming due births
+* pregnancy positive count
+* animals in treatment withdrawal
+* medicines expiring soon
+* recent deaths
+* recent notes
+* recent movements
+
+---
+
+## 15. UI / UX Requirements
+
+### Visual Style
+
+* clean ranch operations aesthetic
+* green as dominant brand accent
+* white and light neutrals for readability
+* rounded containers
+* clear icons
+* large tap targets
+* minimal friction for field use
+
+### Interface Behavior
+
+* floating add button persists
+* nav states clearly highlighted
+* cards easy to scan
+* forms split into logical sections
+* report lists scroll smoothly
+* sticky filters on reports where needed
+
+### Accessibility
+
+* clear contrast
+* readable labels
+* form validation messages
+* keyboard support for desktop use
+
+---
+
+## 16. Branding Requirements
+
+The app should reflect the **AcaciaVeld** identity using the uploaded logo as brand reference.
+
+### Brand Rules
+
+* green and white must dominate
+* logo visible on login and side menu
+* iconography should be simple and modern
+* avoid heavy blue dominance from the reference screenshots
+* use green for active states, buttons, chips, and highlights
+
+---
+
+## 17. MVP Scope
+
+Phase 1 should include:
+
+* authentication
+* dashboard
+* flock management
+* animal profiles
+* treatments
+* health
+* breeding
+* lambing
+* pregnancy scan
+* movements
+* notes + reminders
+* medicine cabinet
+* reporting
+* archive flock
+* contacts
+
+This is enough to make the app operational for real ranch usage.
+
+---
+
+## 18. Future Enhancements
+
+Phase 2 and beyond could include:
+
+* barcode / QR ear tag scanning
+* image upload per animal/event
+* SMS or WhatsApp reminders
+* breeding analytics
+* mortality trend charts
+* AI assistant for ranch queries
+* sales catalogue module for external buyers
+* offline-first support
+* multi-ranch support
+* financial costing module
+* task assignment for staff
+
+---
+
+## 19. Success Metrics
+
+The product is successful if it helps AcaciaVeld:
+
+* reduce paper-based recordkeeping
+* improve treatment traceability
+* track breeding and lambing accurately
+* locate animals and groups quickly
+* generate reports without manual compilation
+* reduce missed reminders and medicine expiry issues
+* improve overall management visibility
+
+---
+
+## 20. Recommended Product Positioning
+
+This should be framed internally as:
+
+> **“AcaciaVeld RanchOS”**
+> A digital operations layer for livestock breeding, health, and ranch performance.
+
+That framing is useful because it keeps the app from shrinking into a note app with sheep icons. It should grow into the system that the ranch depends on.
+
+---
+
+
+
+
+
+////////////////////////////////////////////////
+
+# 1. Exact page-by-page routes
+
+## Public routes
+
+These are unauthenticated pages.
+
+```txt
+/                      → Landing / Login redirect
+/login                 → Login
+/forgot-password       → Forgot password
+/reset-password        → Reset password
+```
+
+---
+
+## Authenticated app routes
+
+## Core shell
+
+```txt
+/app                   → App root, redirects to /app/home
+/app/home              → Dashboard / Home
+/app/flock             → Flock overview
+/app/reporting         → Reporting hub
+/app/notes             → Notes hub
+/app/contacts          → Contacts
+/app/medicine-cabinet  → Medicine inventory
+/app/medicine-disposal → Medicine disposal
+/app/breeds            → Breed library
+/app/archive           → Archived flock
+/app/account           → My account
+/app/user-guide        → User guide
+/app/settings          → Admin/system settings
+```
+
+---
+
+## Flock routes
+
+```txt
+/app/flock/all                     → All animals list
+/app/flock/groups                  → Groups list
+/app/flock/groups/:groupId         → Group detail
+/app/flock/animals/new             → Create animal
+/app/flock/animals/:animalId       → Animal profile
+/app/flock/animals/:animalId/edit  → Edit animal
+/app/flock/archive/:animalId       → Archive animal flow
+```
+
+---
+
+## Animal profile sub-routes
+
+These allow tab-level deep linking.
+
+```txt
+/app/flock/animals/:animalId/overview
+/app/flock/animals/:animalId/treatments
+/app/flock/animals/:animalId/health
+/app/flock/animals/:animalId/performance
+/app/flock/animals/:animalId/breeding
+/app/flock/animals/:animalId/lambing
+/app/flock/animals/:animalId/pregnancy-scans
+/app/flock/animals/:animalId/movements
+/app/flock/animals/:animalId/weaning
+/app/flock/animals/:animalId/notes
+/app/flock/animals/:animalId/files
+```
+
+---
+
+## Record creation routes
+
+These are launched from the floating action button and quick actions.
+
+```txt
+/app/records/treatment/new
+/app/records/health/new
+/app/records/performance/new
+/app/records/breeding/new
+/app/records/lambing/new
+/app/records/pregnancy-scan/new
+/app/records/movement/new
+/app/records/weaning/new
+/app/records/note/new
+/app/records/group/new
+/app/records/contact/new
+/app/records/medicine/new
+/app/records/medicine-disposal/new
+```
+
+Optional animal-prefilled variants:
+
+```txt
+/app/flock/animals/:animalId/treatments/new
+/app/flock/animals/:animalId/health/new
+/app/flock/animals/:animalId/performance/new
+/app/flock/animals/:animalId/breeding/new
+/app/flock/animals/:animalId/lambing/new
+/app/flock/animals/:animalId/pregnancy-scans/new
+/app/flock/animals/:animalId/movements/new
+/app/flock/animals/:animalId/weaning/new
+/app/flock/animals/:animalId/notes/new
+```
+
+---
+
+## Reporting routes
+
+```txt
+/app/reporting/animals-in-flock
+/app/reporting/animals-by-group
+/app/reporting/medicines-purchased
+/app/reporting/treatments
+/app/reporting/service-report
+/app/reporting/movements
+/app/reporting/weight-recording
+/app/reporting/replaced-tags
+/app/reporting/mortality
+/app/reporting/health-assessment
+/app/reporting/animals-born-on-farm
+/app/reporting/lambing-record
+/app/reporting/cull-report
+/app/reporting/sales-catalogue
+/app/reporting/pregnancy-scan
+/app/reporting/expired-medicines
+/app/reporting/medicines-due-to-expire
+/app/reporting/animals-in-withdrawal
+```
+
+---
+
+## Notes routes
+
+```txt
+/app/notes              → Notes list + search
+/app/notes/new          → Create note
+/app/notes/:noteId      → Note detail
+/app/notes/:noteId/edit → Edit note
+```
+
+---
+
+## Contacts routes
+
+```txt
+/app/contacts           → Contacts list
+/app/contacts/new       → New contact
+/app/contacts/:contactId
+/app/contacts/:contactId/edit
+```
+
+---
+
+## Medicine routes
+
+```txt
+/app/medicine-cabinet/new
+/app/medicine-cabinet/:medicineId
+/app/medicine-cabinet/:medicineId/edit
+/app/medicine-disposal/:disposalId
+```
+
+---
+
+# 2. Supabase schema tables and fields
+
+Use `uuid` primary keys for all major entities.
+Use `created_at`, `updated_at` timestamps everywhere.
+
+---
+
+## 2.1 profiles
+
+Maps to Supabase auth users.
+
+| Field      | Type        | Notes                                   |
+| ---------- | ----------- | --------------------------------------- |
+| id         | uuid PK     | same as auth.users.id                   |
+| full_name  | text        |                                         |
+| email      | text        |                                         |
+| phone      | text        |                                         |
+| role       | text        | super_admin, admin, manager, staff, vet |
+| avatar_url | text        | optional                                |
+| is_active  | boolean     | default true                            |
+| created_at | timestamptz |                                         |
+| updated_at | timestamptz |                                         |
+
+---
+
+## 2.2 ranches
+
+For current and future multi-ranch support.
+
+| Field           | Type        |
+| --------------- | ----------- |
+| id              | uuid PK     |
+| name            | text        |
+| code            | text        |
+| location        | text        |
+| description     | text        |
+| logo_url        | text        |
+| primary_color   | text        |
+| secondary_color | text        |
+| created_at      | timestamptz |
+| updated_at      | timestamptz |
+
+---
+
+## 2.3 ranch_user_roles
+
+Links users to ranches.
+
+| Field      | Type                |
+| ---------- | ------------------- |
+| id         | uuid PK             |
+| ranch_id   | uuid FK ranches.id  |
+| user_id    | uuid FK profiles.id |
+| role       | text                |
+| created_at | timestamptz         |
+
+---
+
+## 2.4 species
+
+Controlled list.
+
+| Field | Type    |
+| ----- | ------- |
+| id    | uuid PK |
+| name  | text    |
+| code  | text    |
+
+Examples: sheep, goat, cattle, horse.
+
+---
+
+## 2.5 breeds
+
+| Field       | Type                        |
+| ----------- | --------------------------- |
+| id          | uuid PK                     |
+| ranch_id    | uuid FK ranches.id nullable |
+| species_id  | uuid FK species.id          |
+| name        | text                        |
+| code        | text                        |
+| description | text                        |
+| origin      | text                        |
+| is_active   | boolean                     |
+| created_at  | timestamptz                 |
+| updated_at  | timestamptz                 |
+
+---
+
+## 2.6 animal_groups
+
+| Field      | Type                        |
+| ---------- | --------------------------- |
+| id         | uuid PK                     |
+| ranch_id   | uuid FK ranches.id          |
+| name       | text                        |
+| code       | text                        |
+| species_id | uuid FK species.id nullable |
+| purpose    | text                        |
+| location   | text                        |
+| status     | text                        |
+| notes      | text                        |
+| created_at | timestamptz                 |
+| updated_at | timestamptz                 |
+
+Examples for purpose: breeding, weaning, quarantine, sales, lambing.
+
+---
+
+## 2.7 animals
+
+Core animal table.
+
+| Field                | Type                              | Notes                                            |
+| -------------------- | --------------------------------- | ------------------------------------------------ |
+| id                   | uuid PK                           |                                                  |
+| ranch_id             | uuid FK                           |                                                  |
+| animal_code          | text                              | internal system code                             |
+| tag_number           | text                              | ear tag                                          |
+| alt_tag_number       | text                              | replaced tag / old tag                           |
+| name                 | text                              | optional                                         |
+| species_id           | uuid FK species.id                |                                                  |
+| breed_id             | uuid FK breeds.id                 |                                                  |
+| sex                  | text                              | male, female                                     |
+| birth_date           | date                              |                                                  |
+| acquisition_date     | date                              |                                                  |
+| source_type          | text                              | born_on_farm, purchased, imported, transferred   |
+| source_name          | text                              |                                                  |
+| sire_id              | uuid FK animals.id nullable       |                                                  |
+| dam_id               | uuid FK animals.id nullable       |                                                  |
+| current_group_id     | uuid FK animal_groups.id nullable |                                                  |
+| status               | text                              | active, sold, dead, culled, archived, quarantine |
+| breeding_status      | text                              | open, exposed, pregnant, bred, retired           |
+| health_status        | text                              | healthy, under_treatment, monitor, critical      |
+| withdrawal_status    | boolean                           | default false                                    |
+| withdrawal_end_date  | date                              | nullable                                         |
+| color_markings       | text                              |                                                  |
+| weight_kg            | numeric                           | latest cached weight                             |
+| body_condition_score | numeric                           | latest cached score                              |
+| image_url            | text                              | primary image                                    |
+| notes                | text                              |                                                  |
+| archived_at          | timestamptz                       |                                                  |
+| created_at           | timestamptz                       |                                                  |
+| updated_at           | timestamptz                       |                                                  |
+
+---
+
+## 2.8 animal_images
+
+| Field       | Type                |
+| ----------- | ------------------- |
+| id          | uuid PK             |
+| animal_id   | uuid FK animals.id  |
+| file_url    | text                |
+| file_path   | text                |
+| is_primary  | boolean             |
+| caption     | text                |
+| uploaded_by | uuid FK profiles.id |
+| created_at  | timestamptz         |
+
+---
+
+## 2.9 group_memberships
+
+Useful for movement history.
+
+| Field      | Type                     |
+| ---------- | ------------------------ |
+| id         | uuid PK                  |
+| animal_id  | uuid FK animals.id       |
+| group_id   | uuid FK animal_groups.id |
+| start_date | date                     |
+| end_date   | date nullable            |
+| is_current | boolean                  |
+| reason     | text                     |
+| created_at | timestamptz              |
+
+---
+
+## 2.10 treatments
+
+| Field                | Type                              |
+| -------------------- | --------------------------------- |
+| id                   | uuid PK                           |
+| ranch_id             | uuid FK                           |
+| animal_id            | uuid FK animals.id nullable       |
+| group_id             | uuid FK animal_groups.id nullable |
+| treatment_type       | text                              |
+| medicine_id          | uuid FK medicines.id nullable     |
+| dosage               | text                              |
+| administration_route | text                              |
+| diagnosis_reason     | text                              |
+| treatment_date       | date                              |
+| administered_by      | uuid FK profiles.id nullable      |
+| withdrawal_days      | integer                           |
+| withdrawal_end_date  | date                              |
+| follow_up_date       | date                              |
+| notes                | text                              |
+| created_at           | timestamptz                       |
+| updated_at           | timestamptz                       |
+
+Rule: either `animal_id` or `group_id` must be present.
+
+---
+
+## 2.11 health_events
+
+| Field        | Type                              |                            |
+| ------------ | --------------------------------- | -------------------------- |
+| id           | uuid PK                           |                            |
+| ranch_id     | uuid FK                           |                            |
+| animal_id    | uuid FK animals.id nullable       |                            |
+| group_id     | uuid FK animal_groups.id nullable |                            |
+| event_type   | text                              |                            |
+| severity     | text                              |                            |
+| symptoms     | text                              |                            |
+| diagnosis    | text                              |                            |
+| action_taken | text                              |                            |
+| status       | text                              | open, monitoring, resolved |
+| event_date   | date                              |                            |
+| reviewed_by  | uuid FK profiles.id nullable      |                            |
+| notes        | text                              |                            |
+| created_at   | timestamptz                       |                            |
+| updated_at   | timestamptz                       |                            |
+
+---
+
+## 2.12 weight_records
+
+| Field                | Type                         |
+| -------------------- | ---------------------------- |
+| id                   | uuid PK                      |
+| ranch_id             | uuid FK                      |
+| animal_id            | uuid FK animals.id           |
+| weight_kg            | numeric                      |
+| body_condition_score | numeric                      |
+| recorded_at          | date                         |
+| recorded_by          | uuid FK profiles.id nullable |
+| notes                | text                         |
+| created_at           | timestamptz                  |
+
+---
+
+## 2.13 breeding_records
+
+| Field              | Type                         |                            |
+| ------------------ | ---------------------------- | -------------------------- |
+| id                 | uuid PK                      |                            |
+| ranch_id           | uuid FK                      |                            |
+| female_animal_id   | uuid FK animals.id           |                            |
+| sire_id            | uuid FK animals.id nullable  |                            |
+| external_sire_name | text                         |                            |
+| mating_type        | text                         | natural, ai, embryo        |
+| breeding_date      | date                         |                            |
+| expected_due_date  | date                         |                            |
+| technician_id      | uuid FK profiles.id nullable |                            |
+| outcome            | text                         | pending, confirmed, failed |
+| notes              | text                         |                            |
+| created_at         | timestamptz                  |                            |
+| updated_at         | timestamptz                  |                            |
+
+---
+
+## 2.14 pregnancy_scans
+
+| Field              | Type                                 |                                  |
+| ------------------ | ------------------------------------ | -------------------------------- |
+| id                 | uuid PK                              |                                  |
+| ranch_id           | uuid FK                              |                                  |
+| animal_id          | uuid FK animals.id                   |                                  |
+| breeding_record_id | uuid FK breeding_records.id nullable |                                  |
+| scan_date          | date                                 |                                  |
+| result             | text                                 | positive, negative, inconclusive |
+| gestation_age_days | integer                              |                                  |
+| expected_due_date  | date                                 |                                  |
+| technician_id      | uuid FK profiles.id nullable         |                                  |
+| notes              | text                                 |                                  |
+| created_at         | timestamptz                          |                                  |
+| updated_at         | timestamptz                          |                                  |
+
+---
+
+## 2.15 lambing_records
+
+| Field               | Type                                 |
+| ------------------- | ------------------------------------ |
+| id                  | uuid PK                              |
+| ranch_id            | uuid FK                              |
+| dam_id              | uuid FK animals.id                   |
+| sire_id             | uuid FK animals.id nullable          |
+| breeding_record_id  | uuid FK breeding_records.id nullable |
+| lambing_date        | date                                 |
+| total_born          | integer                              |
+| born_alive          | integer                              |
+| stillbirth_count    | integer                              |
+| complications       | text                                 |
+| assistance_provided | text                                 |
+| notes               | text                                 |
+| created_by          | uuid FK profiles.id                  |
+| created_at          | timestamptz                          |
+| updated_at          | timestamptz                          |
+
+---
+
+## 2.16 offspring_records
+
+Keeps child details linked to a lambing event.
+
+| Field             | Type                        |
+| ----------------- | --------------------------- |
+| id                | uuid PK                     |
+| lambing_record_id | uuid FK lambing_records.id  |
+| animal_id         | uuid FK animals.id nullable |
+| sex               | text                        |
+| birth_weight_kg   | numeric                     |
+| tag_number        | text                        |
+| status            | text                        |
+| notes             | text                        |
+| created_at        | timestamptz                 |
+
+---
+
+## 2.17 movements
+
+| Field         | Type                              |
+| ------------- | --------------------------------- |
+| id            | uuid PK                           |
+| ranch_id      | uuid FK                           |
+| animal_id     | uuid FK animals.id nullable       |
+| group_id      | uuid FK animal_groups.id nullable |
+| movement_type | text                              |
+| from_group_id | uuid FK animal_groups.id nullable |
+| to_group_id   | uuid FK animal_groups.id nullable |
+| movement_date | date                              |
+| reason        | text                              |
+| authorized_by | uuid FK profiles.id nullable      |
+| notes         | text                              |
+| created_at    | timestamptz                       |
+
+---
+
+## 2.18 weaning_records
+
+| Field               | Type                              |
+| ------------------- | --------------------------------- |
+| id                  | uuid PK                           |
+| ranch_id            | uuid FK                           |
+| animal_id           | uuid FK animals.id                |
+| dam_id              | uuid FK animals.id nullable       |
+| weaning_date        | date                              |
+| age_at_weaning_days | integer                           |
+| weight_kg           | numeric                           |
+| target_group_id     | uuid FK animal_groups.id nullable |
+| notes               | text                              |
+| created_at          | timestamptz                       |
+
+---
+
+## 2.19 notes
+
+| Field            | Type                              |                      |
+| ---------------- | --------------------------------- | -------------------- |
+| id               | uuid PK                           |                      |
+| ranch_id         | uuid FK                           |                      |
+| title            | text                              |                      |
+| content          | text                              |                      |
+| linked_animal_id | uuid FK animals.id nullable       |                      |
+| linked_group_id  | uuid FK animal_groups.id nullable |                      |
+| linked_module    | text                              |                      |
+| created_by       | uuid FK profiles.id               |                      |
+| reminder_at      | timestamptz nullable              |                      |
+| is_pinned        | boolean                           |                      |
+| status           | text                              | open, done, archived |
+| created_at       | timestamptz                       |                      |
+| updated_at       | timestamptz                       |                      |
+
+---
+
+## 2.20 contacts
+
+| Field      | Type        |
+| ---------- | ----------- |
+| id         | uuid PK     |
+| ranch_id   | uuid FK     |
+| name       | text        |
+| company    | text        |
+| role       | text        |
+| phone      | text        |
+| email      | text        |
+| address    | text        |
+| notes      | text        |
+| created_at | timestamptz |
+| updated_at | timestamptz |
+
+---
+
+## 2.21 medicines
+
+| Field               | Type                         |                           |
+| ------------------- | ---------------------------- | ------------------------- |
+| id                  | uuid PK                      |                           |
+| ranch_id            | uuid FK                      |                           |
+| name                | text                         |                           |
+| category            | text                         |                           |
+| batch_number        | text                         |                           |
+| quantity            | numeric                      |                           |
+| unit                | text                         |                           |
+| purchase_date       | date                         |                           |
+| expiry_date         | date                         |                           |
+| supplier_contact_id | uuid FK contacts.id nullable |                           |
+| cost                | numeric                      |                           |
+| storage_notes       | text                         |                           |
+| status              | text                         | active, expired, disposed |
+| created_at          | timestamptz                  |                           |
+| updated_at          | timestamptz                  |                           |
+
+---
+
+## 2.22 medicine_disposals
+
+| Field             | Type                         |
+| ----------------- | ---------------------------- |
+| id                | uuid PK                      |
+| ranch_id          | uuid FK                      |
+| medicine_id       | uuid FK medicines.id         |
+| quantity_disposed | numeric                      |
+| disposal_date     | date                         |
+| reason            | text                         |
+| disposal_method   | text                         |
+| authorized_by     | uuid FK profiles.id nullable |
+| notes             | text                         |
+| created_at        | timestamptz                  |
+
+---
+
+## 2.23 replaced_tags
+
+| Field            | Type               |
+| ---------------- | ------------------ |
+| id               | uuid PK            |
+| ranch_id         | uuid FK            |
+| animal_id        | uuid FK animals.id |
+| old_tag_number   | text               |
+| new_tag_number   | text               |
+| replacement_date | date               |
+| reason           | text               |
+| notes            | text               |
+| created_at       | timestamptz        |
+
+---
+
+## 2.24 mortality_records
+
+| Field           | Type                              |
+| --------------- | --------------------------------- |
+| id              | uuid PK                           |
+| ranch_id        | uuid FK                           |
+| animal_id       | uuid FK animals.id nullable       |
+| group_id        | uuid FK animal_groups.id nullable |
+| death_date      | date                              |
+| cause           | text                              |
+| suspected_cause | text                              |
+| disposal_method | text                              |
+| notes           | text                              |
+| created_at      | timestamptz                       |
+
+---
+
+## 2.25 cull_records
+
+| Field      | Type               |
+| ---------- | ------------------ |
+| id         | uuid PK            |
+| ranch_id   | uuid FK            |
+| animal_id  | uuid FK animals.id |
+| cull_date  | date               |
+| reason     | text               |
+| notes      | text               |
+| created_at | timestamptz        |
+
+---
+
+## 2.26 sales_catalogue_entries
+
+For sale-ready animals.
+
+| Field        | Type                 |                                |
+| ------------ | -------------------- | ------------------------------ |
+| id           | uuid PK              |                                |
+| ranch_id     | uuid FK              |                                |
+| animal_id    | uuid FK animals.id   |                                |
+| title        | text                 |                                |
+| description  | text                 |                                |
+| asking_price | numeric              |                                |
+| status       | text                 | draft, listed, sold, withdrawn |
+| listed_at    | timestamptz          |                                |
+| sold_at      | timestamptz nullable |                                |
+| created_at   | timestamptz          |                                |
+| updated_at   | timestamptz          |                                |
+
+---
+
+## 2.27 files
+
+Generic attachments.
+
+| Field       | Type                        |
+| ----------- | --------------------------- |
+| id          | uuid PK                     |
+| ranch_id    | uuid FK                     |
+| animal_id   | uuid FK animals.id nullable |
+| module_name | text                        |
+| record_id   | uuid nullable               |
+| file_url    | text                        |
+| file_path   | text                        |
+| file_type   | text                        |
+| uploaded_by | uuid FK profiles.id         |
+| created_at  | timestamptz                 |
+
+---
+
+## 2.28 audit_logs
+
+| Field      | Type                |
+| ---------- | ------------------- |
+| id         | uuid PK             |
+| ranch_id   | uuid FK             |
+| user_id    | uuid FK profiles.id |
+| action     | text                |
+| table_name | text                |
+| record_id  | uuid                |
+| old_values | jsonb               |
+| new_values | jsonb               |
+| created_at | timestamptz         |
+
+---
+
+# 3. User flows
+
+## 3.1 Authentication flow
+
+1. User visits `/login`
+2. Enters email and password
+3. Supabase Auth validates credentials
+4. App fetches profile and ranch role
+5. Redirect to `/app/home`
+6. Route guards apply permissions
+
+---
+
+## 3.2 Add new animal
+
+1. User clicks floating `+`
+2. Selects **New Animal**
+3. Fills animal form:
+
+   * tag number
+   * breed
+   * sex
+   * birth date
+   * source
+   * group
+4. Optional image upload
+5. Submit
+6. Save to `animals`
+7. If group selected:
+
+   * create `group_memberships` row
+8. Redirect to animal profile
+
+---
+
+## 3.3 Record treatment
+
+1. User clicks quick action **Treatments**
+2. Select animal or group
+3. Choose medicine
+4. Enter dosage, route, reason
+5. Enter treatment date and withdrawal days
+6. Submit
+7. Save to `treatments`
+8. Auto-calculate withdrawal end date
+9. Update animal cached withdrawal status
+10. Reduce medicine quantity if linked inventory exists
+
+---
+
+## 3.4 Record breeding
+
+1. User opens Breeding module
+2. Select female animal
+3. Select sire or enter external sire
+4. Enter breeding date and mating type
+5. App calculates expected due date
+6. Submit
+7. Save to `breeding_records`
+8. Update female breeding status to `bred`
+
+---
+
+## 3.5 Record pregnancy scan
+
+1. Open Pregnancy Scan
+2. Select animal
+3. Link breeding record if available
+4. Enter scan result and date
+5. Submit
+6. Save to `pregnancy_scans`
+7. If positive:
+
+   * update breeding status to `pregnant`
+   * store expected due date
+
+---
+
+## 3.6 Record lambing
+
+1. Open Lambing
+2. Select dam
+3. Optionally select sire / breeding record
+4. Enter birth totals and notes
+5. Submit
+6. Save lambing record
+7. Prompt: “Create offspring records?”
+8. User enters each offspring’s sex, weight, tag
+9. Save offspring and optionally create animal records
+
+---
+
+## 3.7 Record movement
+
+1. Open Movements
+2. Select animal or group
+3. Enter from-group and to-group
+4. Add date and reason
+5. Save
+6. App updates current group in animal record
+7. Closes previous `group_memberships` and creates new current membership
+
+---
+
+## 3.8 Save note with reminder
+
+1. Open Notes
+2. Add title and note content
+3. Optional link to animal/group/module
+4. Set reminder time
+5. Save
+6. Dashboard widget shows upcoming reminder
+7. Notification system can later hook into this
+
+---
+
+## 3.9 Generate report
+
+1. Open `/app/reporting`
+2. Select report type
+3. Apply filters:
+
+   * date range
+   * species
+   * breed
+   * group
+4. App queries Supabase
+5. Show results in table
+6. User exports CSV or PDF
+
+---
+
+## 3.10 Archive animal
+
+1. Open animal profile
+2. Click archive
+3. Select archive reason:
+
+   * sold
+   * dead
+   * culled
+   * transferred
+4. Confirm
+5. Update animal status
+6. Set `archived_at`
+7. Remove from active flock screens
+8. Keep in archive module and reports
+
+---
+
+# 4. Sidebar / navigation map
+
+## 4.1 Primary navigation
+
+This should be persistent in mobile bottom nav and desktop sidebar.
+
+```txt
+Home
+Flock
+Reporting
+Notes
++ Add
+```
+
+---
+
+## 4.2 Sidebar structure
+
+```txt
+Dashboard
+  - Home
+
+Flock Management
+  - All Animals
+  - Groups
+  - Add Animal
+  - Archive Flock
+  - Animal Breeds
+
+Health & Operations
+  - Treatments
+  - Health
+  - Performance
+  - Breeding
+  - Lambing
+  - Pregnancy Scans
+  - Movements
+  - Weaning
+
+Inventory
+  - Medicine Cabinet
+  - Medicine Disposal
+
+Reports
+  - Animals in Flock
+  - Animals by Group
+  - Medicines Purchased
+  - Treatments
+  - Service Report
+  - Movements
+  - Weight Recording
+  - Replaced Tags
+  - Mortality Report
+  - Health Assessment Report
+  - Animals Born on Farm
+  - Lambing Record
+  - Cull Report
+  - Sales Catalogue Report
+  - Pregnancy Scan Report
+  - Expired Medicines
+  - Medicines Due to Expire
+  - Animals in Withdrawal
+
+Productivity
+  - Notes
+  - Contacts
+
+Account
+  - My Account
+  - User Guide
+  - Settings
+  - Log Out
+```
+
+---
+
+## 4.3 Floating action button menu
+
+When user taps `+`, show modal sheet:
+
+```txt
+Add Animal
+Add Group
+Log Treatment
+Log Health Event
+Add Weight Record
+Record Breeding
+Record Lambing
+Record Pregnancy Scan
+Record Movement
+Record Weaning
+Create Note
+Add Medicine
+Record Medicine Disposal
+Add Contact
+```
+
+---
+
+# 5. Component list for React UI
+
+Below is the recommended component inventory. Think of it as the crate system for the whole barn.
+
+---
+
+## 5.1 App shell components
+
+* `AppShell`
+* `TopBar`
+* `BottomNav`
+* `Sidebar`
+* `SidebarSection`
+* `SidebarItem`
+* `FloatingActionButton`
+* `QuickAddModal`
+* `PageHeader`
+* `Breadcrumbs`
+* `ProtectedRoute`
+* `RoleGuard`
+
+---
+
+## 5.2 Shared UI components
+
+* `Button`
+* `IconButton`
+* `Input`
+* `Textarea`
+* `Select`
+* `MultiSelect`
+* `DatePicker`
+* `DateRangePicker`
+* `Checkbox`
+* `RadioGroup`
+* `Toggle`
+* `Tabs`
+* `Badge`
+* `Avatar`
+* `Card`
+* `StatCard`
+* `MetricTile`
+* `EmptyState`
+* `SearchBar`
+* `FilterBar`
+* `Table`
+* `TableToolbar`
+* `Pagination`
+* `Drawer`
+* `Modal`
+* `ConfirmDialog`
+* `ToastProvider`
+* `FileUpload`
+* `ImageUploader`
+* `TagChip`
+* `StatusPill`
+* `Loader`
+* `SkeletonCard`
+* `SkeletonTable`
+
+---
+
+## 5.3 Dashboard components
+
+* `DashboardOverview`
+* `DashboardStatsGrid`
+* `QuickActionsGrid`
+* `UpcomingRemindersCard`
+* `RecentTreatmentsCard`
+* `AnimalsInWithdrawalCard`
+* `DueBirthsCard`
+* `ExpiringMedicinesCard`
+* `RecentNotesCard`
+* `GroupDistributionChart`
+* `BreedDistributionChart`
+
+---
+
+## 5.4 Flock module components
+
+* `AnimalList`
+* `AnimalTable`
+* `AnimalCard`
+* `AnimalFilters`
+* `AnimalProfileHeader`
+* `AnimalProfileTabs`
+* `AnimalOverviewPanel`
+* `AnimalLineageCard`
+* `AnimalStatusCard`
+* `AnimalGallery`
+* `AnimalGroupHistory`
+* `AnimalTimeline`
+* `AnimalForm`
+* `AnimalArchiveDialog`
+
+---
+
+## 5.5 Group components
+
+* `GroupList`
+* `GroupCard`
+* `GroupForm`
+* `GroupDetailHeader`
+* `GroupAnimalTable`
+* `GroupMovementHistory`
+
+---
+
+## 5.6 Treatment components
+
+* `TreatmentForm`
+* `TreatmentList`
+* `TreatmentTable`
+* `TreatmentFilters`
+* `WithdrawalStatusBadge`
+* `MedicinePicker`
+
+---
+
+## 5.7 Health components
+
+* `HealthEventForm`
+* `HealthEventList`
+* `HealthSeverityBadge`
+* `HealthCaseStatusPill`
+
+---
+
+## 5.8 Performance components
+
+* `WeightRecordForm`
+* `WeightHistoryTable`
+* `WeightTrendChart`
+* `BodyConditionInput`
+
+---
+
+## 5.9 Breeding components
+
+* `BreedingRecordForm`
+* `BreedingHistoryTable`
+* `SirePicker`
+* `DamPicker`
+* `DueDateBadge`
+
+---
+
+## 5.10 Pregnancy scan components
+
+* `PregnancyScanForm`
+* `PregnancyScanTable`
+* `PregnancyResultBadge`
+
+---
+
+## 5.11 Lambing components
+
+* `LambingRecordForm`
+* `OffspringFormRepeater`
+* `LambingHistoryTable`
+* `BirthOutcomeSummary`
+
+---
+
+## 5.12 Movement components
+
+* `MovementForm`
+* `MovementHistoryTable`
+* `GroupTransferSelector`
+
+---
+
+## 5.13 Weaning components
+
+* `WeaningForm`
+* `WeaningHistoryTable`
+
+---
+
+## 5.14 Notes components
+
+* `NotesEditor`
+* `NotesList`
+* `NoteCard`
+* `ReminderPicker`
+* `LinkedEntitySelector`
+
+---
+
+## 5.15 Reporting components
+
+* `ReportsHub`
+* `ReportCard`
+* `ReportFilters`
+* `ReportTable`
+* `ReportExportActions`
+* `SummaryTotalsBar`
+
+---
+
+## 5.16 Medicine components
+
+* `MedicineForm`
+* `MedicineInventoryTable`
+* `MedicineStatusBadge`
+* `ExpiryWarningBanner`
+* `MedicineDisposalForm`
+* `MedicineDisposalTable`
+
+---
+
+## 5.17 Contacts and support components
+
+* `ContactForm`
+* `ContactsTable`
+* `ContactCard`
+* `UserGuidePage`
+* `AccountProfileForm`
+
+---
+
+## 5.18 File/media components
+
+* `AttachmentList`
+* `AttachmentUploader`
+* `ImageGalleryLightbox`
+
+---
+
+## 5.19 Admin components
+
+* `UserManagementTable`
+* `RoleAssignmentForm`
+* `AuditLogTable`
+* `SystemSettingsPanel`
+
+---
+
+# Recommended React folder structure
+
+```txt
+src/
+  app/
+    routes/
+    providers/
+    layouts/
+  components/
+    ui/
+    dashboard/
+    flock/
+    groups/
+    treatments/
+    health/
+    performance/
+    breeding/
+    lambing/
+    pregnancy/
+    movements/
+    weaning/
+    notes/
+    reporting/
+    medicines/
+    contacts/
+    admin/
+  pages/
+    auth/
+    home/
+    flock/
+    reporting/
+    notes/
+    contacts/
+    medicines/
+    account/
+    settings/
+  hooks/
+  lib/
+    supabase/
+    utils/
+    constants/
+  services/
+  types/
+  features/
+```
+
+---
+
+# Suggested implementation order
+
+## Phase 1
+
+* auth
+* app shell
+* home
+* flock
+* animal CRUD
+* groups
+* notes
+
+## Phase 2
+
+* treatments
+* health
+* performance
+* breeding
+* pregnancy scans
+* lambing
+* movements
+* weaning
+
+## Phase 3
+
+* medicine cabinet
+* disposal
+* reporting
+* archive
+* contacts
+* audit logs
+
+## Phase 4
+
+* exports
+* charts
+* reminders
+* storage uploads
+* role refinements
+

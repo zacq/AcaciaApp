@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { 
-  Home, 
-  Users, 
-  BarChart3, 
-  StickyNote, 
-  Plus, 
-  Menu, 
-  X, 
-  LogOut, 
-  User, 
-  BookOpen, 
-  Settings,
+import ErrorBoundary from './ErrorBoundary';
+import {
+  Home,
+  Users,
+  BarChart3,
+  StickyNote,
+  Plus,
+  Menu,
+  X,
+  LogOut,
+  User,
+  BookOpen,
   Archive,
   Briefcase,
   Stethoscope,
@@ -20,7 +20,6 @@ import {
   Baby,
   Scan,
   Scissors,
-  ClipboardList
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
@@ -37,6 +36,7 @@ export default function Layout() {
   const { profile } = useAuth();
   const navigate = useNavigate();
 
+  // Auth temporarily deactivated — re-enable when sign-in is ready
   const handleLogout = () => {
     auth.signOut();
     navigate('/login');
@@ -99,7 +99,9 @@ export default function Layout() {
 
       {/* Main Content */}
       <main className="flex-1 pb-24 md:pb-0 md:pl-0">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
 
       {/* Bottom Nav (Mobile) */}
