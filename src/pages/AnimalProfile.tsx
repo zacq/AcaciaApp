@@ -44,7 +44,7 @@ export default function AnimalProfile() {
   const [activeTab, setActiveTab] = useState<Tab>('overview');
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !db) { setLoading(false); return; }
     const unsubscribe = onSnapshot(doc(db, 'animals', id), (snap) => {
       if (snap.exists()) setAnimal({ id: snap.id, ...snap.data() } as Animal);
       setLoading(false);

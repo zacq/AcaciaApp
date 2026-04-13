@@ -31,13 +31,14 @@ export default function Home() {
   const [animalCount, setAnimalCount] = useState<number | null>(null);
 
   useEffect(() => {
+    if (!db) return;
     const fetchCount = async () => {
       try {
         const q = query(collection(db, 'animals'));
         const snapshot = await getDocs(q);
         setAnimalCount(snapshot.size);
       } catch (err) {
-        console.error('Error fetching animal count:', err);
+        console.warn('Animal count unavailable (Supabase integration pending)');
       }
     };
     fetchCount();

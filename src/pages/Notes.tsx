@@ -13,17 +13,19 @@ export default function Notes() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!db) { setLoading(false); return; }
     const q = query(collection(db, 'notes'), orderBy('created_at', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const notesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Note));
       setNotes(notesData);
       setLoading(false);
-    });
+    }, () => setLoading(false));
     return () => unsubscribe();
   }, []);
 
   const handleSaveNote = async () => {
     if (!newNote.trim()) return;
+    if (!db) { alert('Database not connected yet (Supabase integration pending).'); return; }
     try {
       await addDoc(collection(db, 'notes'), {
         content: newNote,

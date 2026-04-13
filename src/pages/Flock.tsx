@@ -31,6 +31,8 @@ export default function Flock() {
   const [groupForm, setGroupForm] = useState({ name: '', purpose: '', location: '' });
 
   useEffect(() => {
+    if (!db) { setLoading(false); return; }
+
     const q = query(collection(db, 'animals'));
     const unsubscribeAnimals = onSnapshot(q, (snapshot) => {
       setAnimals(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Animal)));
