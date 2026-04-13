@@ -119,7 +119,10 @@ export default function Layout() {
             <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
           </NavLink>
         ))}
-        <button className="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 -mt-12 border-4 border-background">
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 -mt-12 border-4 border-background"
+        >
           <Plus size={24} />
         </button>
       </nav>
