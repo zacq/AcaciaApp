@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Layout from './components/Layout';
 
 import Home from './pages/Home';
@@ -28,13 +28,16 @@ import AnimalBreeds from './pages/AnimalBreeds';
 import Account from './pages/Account';
 import ReportViewer from './pages/ReportViewer';
 
-// Auth temporarily deactivated — uncomment ProtectedRoute usage below when sign-in is ready
-// function ProtectedRoute({ children }: { children: React.ReactNode }) {
-//   const { user, loading } = useAuth();
-//   if (loading) return <div className="flex items-center justify-center h-screen">Loading...</div>;
-//   if (!user) return <Navigate to="/login" />;
-//   return <>{children}</>;
-// }
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return (
+    <div className="flex items-center justify-center h-screen bg-background">
+      <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+    </div>
+  );
+  if (!user) return <Navigate to="/login" replace />;
+  return <>{children}</>;
+}
 
 export default function App() {
   return (
@@ -43,8 +46,7 @@ export default function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
 
-          {/* Auth guard deactivated: was <ProtectedRoute><Layout /></ProtectedRoute> */}
-          <Route path="/app" element={<Layout />}>
+          <Route path="/app" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
             <Route index element={<Navigate to="home" />} />
             <Route path="home" element={<Home />} />
 

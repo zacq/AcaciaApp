@@ -2282,3 +2282,398 @@ src/
 * storage uploads
 * role refinements
 
+## Phase 5 — Pedigree & Breeding Intelligence
+
+* pedigree tree UI (5 generations)
+* pedigree_cache population
+* certificate generation (PDF snapshot)
+* buyer report / pre-sale PDF
+* weight history chart
+* registration details management
+* breed percentage calculation
+
+---
+
+---
+
+# PRD UPDATE v2.0 — PEDIGREE, REGISTRATION & CERTIFICATION ENGINE
+
+## Overview
+
+New Core Module: **Pedigree & Breeding Intelligence System**
+
+This module enables:
+- Full multi-generation lineage tracking (up to 5 generations)
+- Breed purity validation and breed percentage calculation
+- Registration number and pedigree ID management
+- Certificate generation (PDF with frozen snapshot)
+- Buyer-facing pedigree reports with weight trend, photos, and ancestry
+- Integration with SA Stud Book, American Dorper Society, and similar registries
+
+---
+
+## DB Schema Additions
+
+### animals (UPDATED FIELDS)
+
+Add to existing animals table:
+
+| Field              | Type            | Notes                                    |
+| ------------------ | --------------- | ---------------------------------------- |
+| visual_id          | text            | Visual ear tag ID                        |
+| eid                | text            | Electronic ID (RFID)                     |
+| pedigree_id        | text            | Registry pedigree ID number              |
+| registration_number| text            | Registry registration number             |
+| breed_percentage   | numeric(5,2)    | e.g. 87.5 for 87.5% Fullblood            |
+| breeding_class     | text            | Fullblood / Purebred / Commercial        |
+| breeder_name       | text            | Name of original breeder                 |
+| source_country     | text            | e.g. South Africa                        |
+| import_batch       | text            | Import batch reference if applicable     |
+| dam_sire           | text            | Dam's sire name (text fallback)          |
+| sire_sire          | text            | Sire's sire name (text fallback)         |
+| adopted_dam        | text            | Adopted dam reference                    |
+| scrapie_tag        | text            | Scrapie tag number (regulatory)          |
+| born_as            | text            | single / twin / triplet / quad           |
+| cull               | boolean         | Flagged for culling                      |
+| color_type         | text            | e.g. Dorper, White Dorper                |
+
+IMPORTANT: sire_id and dam_id already exist as uuid FK → animals(id) per original schema.
+
+---
+
+### animal_images (UPDATED CONSTRAINT)
+
+Existing table already defined. Enforce max 3 images per animal at application layer.
+Slot labels: 'front', 'side', 'rear' — store as caption field.
+
+| Field       | Type                | Notes                            |
+| ----------- | ------------------- | -------------------------------- |
+| id          | uuid PK             |                                  |
+| animal_id   | uuid FK animals.id  |                                  |
+| file_url    | text                | Supabase Storage public URL      |
+| file_path   | text                | Supabase Storage path            |
+| slot        | text                | front / side / rear              |
+| is_primary  | boolean             | Primary display image            |
+| caption     | text                | Optional caption                 |
+| uploaded_by | uuid FK profiles.id |                                  |
+| created_at  | timestamptz         |                                  |
+
+Storage bucket: animal-images
+Path convention: {ranch_id}/{animal_id}/{slot}.jpg
+
+---
+
+### animal_weights (NEW — replaces single cached weight)
+
+Track full weight history per animal. NEVER store only one weight.
+
+| Field                | Type                         |
+| -------------------- | ---------------------------- |
+| id                   | uuid PK                      |
+| animal_id            | uuid FK animals.id           |
+| weight_kg            | numeric                      |
+| recorded_at          | date                         |
+| age_days             | integer                      |
+| condition_score      | numeric(3,1)                 |
+| recorded_by          | uuid FK profiles.id nullable |
+| notes                | text                         |
+| created_at           | timestamptz                  |
+
+Keep animals.weight_kg as a cached latest value only. Always insert a new animal_weights row when weight is captured.
+
+---
+
+### pedigree_cache (NEW — performance optimization)
+
+Avoids recomputing lineage tree on every load. Rebuild on animal create/update.
+
+| Field        | Type               | Notes                   |
+| ------------ | ------------------ | ----------------------- |
+| id           | uuid PK            |                         |
+| animal_id    | uuid              | Subject animal          |
+| generation   | integer            | 1 = parent, 5 = 5th gen |
+| ancestor_id  | uuid              | Ancestor animal ID      |
+| relation_type| text               | sire / dam              |
+| cached_at    | timestamptz        |                         |
+
+Use live recursive query for accuracy. Use pedigree_cache for display speed and PDF generation.
+
+Recursive query template (Postgres):
+
+```sql
+WITH RECURSIVE pedigree AS (
+  SELECT id, sire_id, dam_id, 1 AS generation
+  FROM animals
+  WHERE id = :animal_id
+
+  UNION ALL
+
+  SELECT a.id, a.sire_id, a.dam_id, p.generation + 1
+  FROM animals a
+  JOIN pedigree p ON a.id = p.sire_id OR a.id = p.dam_id
+  WHERE p.generation < 5
+)
+SELECT * FROM pedigree;
+```
+
+---
+
+### animal_certificates (NEW)
+
+Frozen snapshots used for PDF generation and buyer reports.
+
+| Field         | Type                | Notes                                     |
+| ------------- | ------------------- | ----------------------------------------- |
+| id            | uuid PK             |                                           |
+| animal_id     | uuid FK animals.id  |                                           |
+| certificate_url| text               | Supabase Storage URL of generated PDF     |
+| generated_at  | timestamptz         |                                           |
+| generated_by  | uuid FK profiles.id |                                           |
+| snapshot_data | jsonb               | Frozen copy of pedigree + animal details  |
+
+Storage bucket: certificates
+Path convention: {ranch_id}/{animal_id}/{generated_at}.pdf
+
+---
+
+### animal_registration_details (NEW)
+
+Registry-specific metadata stored separately to keep animals table clean.
+
+| Field           | Type               |
+| --------------- | ------------------ |
+| id              | uuid PK            |
+| animal_id       | uuid FK animals.id |
+| registry_name   | text               |
+| inspection_type | text               |
+| color_type      | text               |
+| birth_type      | text               |
+| service_type    | text               |
+| embryo_status   | text               |
+| flock_name      | text               |
+| flock_number    | text               |
+| issued_date     | date               |
+| reissued_date   | date nullable      |
+| certificate_number | text            |
+| created_at      | timestamptz        |
+
+---
+
+## Updated Add Animal Form Fields
+
+Based on reference app screenshots and SA/US pedigree certificate analysis:
+
+### Section 1 — Identification
+- Tag Number * (required)
+- Visual ID
+- EID (Electronic ID)
+- Animal Name
+- Pedigree ID
+- Registration Number
+
+### Section 2 — Classification
+- Sex * (required)
+- Breed * (required — select from breeds list)
+- Species * (required)
+- Breeding Class (Fullblood / Purebred / Commercial)
+- Born As (Single / Twin / Triplet / Quad)
+- Color / Markings
+
+### Section 3 — Dates
+- DOB (Date of Birth) — defaults to today
+- Acquisition Date
+
+### Section 4 — Parentage
+- Sire (searchable dropdown from animals — males only)
+- Dam (searchable dropdown from animals — females only)
+- Dam-Sire (text fallback for unregistered)
+- Sire-Sire (text fallback for unregistered)
+- Adopted Dam (text)
+- Breeder Name
+- Source Country
+
+### Section 5 — Physical
+- Weight (kg) — initial weight, creates animal_weights record
+- Body Condition Score (1–5)
+- Cull (toggle)
+- Scrapie Tag
+
+### Section 6 — Photos (Max 3)
+- Front view — camera / file upload
+- Side view — camera / file upload
+- Rear view — camera / file upload
+(Upload to Supabase Storage: animal-images bucket)
+
+### Section 7 — Notes
+- Notes (textarea)
+
+---
+
+## User Flows
+
+### FLOW 1: Register New Animal
+1. User opens "Add Animal" (full-page form, not bottom sheet)
+2. Fills identification fields
+3. Selects Sire and Dam from searchable animal list
+4. Captures up to 3 photos (front, side, rear)
+5. Saves initial weight (creates animal_weights record)
+6. System validates no duplicate tag number
+7. Saves animal to Supabase
+8. Triggers pedigree_cache generation
+9. Redirects to Animal Profile
+
+### FLOW 2: View Pedigree
+1. Open Animal Profile
+2. Tap "Pedigree" tab
+3. System loads pedigree_cache or runs recursive query
+4. Displays horizontal tree (5 generations)
+5. Tapping any ancestor opens that animal's profile
+
+### FLOW 3: Generate Certificate
+1. Open Animal Profile → tap "Generate Certificate"
+2. System gathers: animal details, latest weight, 5-gen pedigree, photos, breeder info
+3. Freezes snapshot as JSONB
+4. Generates PDF
+5. Stores PDF in Supabase Storage → certificates bucket
+6. Saves record in animal_certificates
+7. Opens preview / share sheet
+
+### FLOW 4: Buyer Report (Pre-Sale)
+1. Select animal → "Generate Buyer Report"
+2. Output includes: pedigree tree, weight trend chart, breed %, photos
+3. Export as PDF
+
+---
+
+## Certificate Structure (Required Content)
+
+- Animal Name / Tag Number
+- Registration Number
+- Pedigree ID
+- Breed & Breeding Class (Fullblood / Purebred / %)
+- Date of Birth
+- Birth Type (single / twin / triplet)
+- Sex
+- Color Type
+- Breeder Name
+- Current Owner
+- Latest Weight & Body Condition Score
+- Primary Photo
+- 5-Generation Pedigree Tree
+- Registry Name
+- Issue Date & Re-issue Date
+- QR Code linking to animal profile
+
+---
+
+## New UI Components Required
+
+### PedigreeTree
+- Horizontal tree layout (mirrors SA Stud Book Vyfgenerasiestamboom format)
+- Blue nodes = males, Pink nodes = females
+- Expandable up to 5 generations
+- Each node shows: tag/name, registration number, breeding class
+
+### AnimalImageCapture
+- 3-slot image capture component
+- Slots: Front, Side, Rear
+- Each slot: camera icon → opens camera or file picker
+- Upload to Supabase Storage
+- Shows thumbnail when uploaded
+- Allow replace / remove per slot
+
+### AnimalSelector (Searchable)
+- Used for Sire and Dam selection
+- Search by tag number, name, pedigree ID
+- Shows sex badge, breed, DOB
+- Filter: males only (for sire), females only (for dam)
+
+### WeightChart
+- Line chart of weight over time using Recharts
+- Shows age markers on x-axis
+- Highlight latest weight
+
+### CertificatePreview
+- Styled render matching official certificate layout
+- Print / share / download actions
+
+---
+
+## Updated Sidebar Navigation
+
+```
+Dashboard
+  - Home
+
+Livestock
+  - All Animals
+  - Groups
+  - Add Animal
+  - Pedigree Explorer
+  - Certificates
+  - Weight Tracking
+  - Archive Flock
+  - Animal Breeds
+
+Health & Operations
+  - Treatments
+  - Health
+  - Breeding
+  - Lambing
+  - Pregnancy Scans
+  - Movements
+  - Weaning
+
+Inventory
+  - Medicine Cabinet
+  - Medicine Disposal
+
+Reports
+  [all existing reports]
+  + Pedigree Report
+  + Weight Recording Report
+  + Sales Catalogue Report
+
+Productivity
+  - Notes
+  - Contacts
+
+Account
+  - My Account
+  - Settings
+  - Log Out
+```
+
+---
+
+## Supabase Storage Buckets Required
+
+| Bucket          | Purpose                          | Access       |
+| --------------- | -------------------------------- | ------------ |
+| animal-images   | 3 photos per animal              | Authenticated|
+| certificates    | Generated PDF certificates       | Authenticated|
+| documents       | Generic file attachments         | Authenticated|
+| avatars         | User profile photos              | Authenticated|
+
+---
+
+## Business Logic Notes
+
+- Breed percentage must be derivable from ancestry chain (fullblood parents → 100%, one commercial → 50%, etc.)
+- Inbreeding coefficient can be computed from pedigree_cache in future phase
+- pedigree_cache should be invalidated and rebuilt whenever sire_id or dam_id on any ancestor changes
+- Certificate PDFs are point-in-time snapshots — they are NEVER regenerated from live data, only new ones are issued
+- All weights must be stored historically — animals.weight_kg is only a display cache
+
+---
+
+## Hosting Architecture
+
+- Frontend (React/Vite) → Netlify (current) → migrate to Hostinger when ready
+- Database → Supabase (Postgres + RLS)
+- Storage → Supabase Storage (animal-images, certificates buckets)
+- Auth → Supabase Auth (email/password + Google OAuth)
+- PDF generation → browser-side using @react-pdf/renderer or jsPDF (Phase 5)
+
+---
+

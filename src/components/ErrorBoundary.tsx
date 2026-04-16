@@ -10,6 +10,10 @@ export default class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   State
 > {
+  declare state: State;
+  declare props: Readonly<{ children: React.ReactNode }>;
+  declare setState: (state: Partial<State>) => void;
+
   constructor(props: { children: React.ReactNode }) {
     super(props);
     this.state = { hasError: false, message: '' };

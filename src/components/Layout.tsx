@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
-import { auth } from '../firebase';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -33,12 +32,11 @@ function cn(...inputs: ClassValue[]) {
 
 export default function Layout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const { profile } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
 
-  // Auth temporarily deactivated — re-enable when sign-in is ready
-  const handleLogout = () => {
-    auth.signOut();
+  const handleLogout = async () => {
+    await signOut();
     navigate('/login');
   };
 
