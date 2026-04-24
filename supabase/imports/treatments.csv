@@ -1,0 +1,41 @@
+animal_tag,medicine_name,dosage,treatment_date,withdrawal_days,withdrawal_end_date,notes
+D001,Ivomec Injection,9.2ml IM,2025-10-01,28,2025-10-29,Annual drenching programme — pre-breeding season
+D001,Covexin 8,2ml SC,2025-09-15,0,,Annual booster — clostridial 8-way — whole Dorper mob
+D002,Ivomec Injection,9.5ml IM,2025-10-01,28,2025-10-29,Annual drenching
+D002,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D003,Ivomec Injection,8.8ml IM,2025-10-01,28,2025-10-29,Annual drenching
+D003,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D004,Ivomec Injection,6.8ml IM,2025-10-01,28,2025-10-29,Annual drenching — Dorper ewes
+D004,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D004,Lutalyse,2ml IM,2026-01-20,0,,Oestrus synchronisation — Breeding Group A
+D005,Ivomec Injection,7.2ml IM,2025-10-01,28,2025-10-29,Annual drenching
+D005,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D005,Multivitamin AD3E,3ml IM,2025-12-10,0,,Pregnancy supplement — confirmed pregnant
+D006,Ivomec Injection,6.5ml IM,2025-10-01,28,2025-10-29,Annual drenching
+D006,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D006,Tribexen,26ml oral,2025-08-15,14,2025-08-29,High FAMACHA score — 3 — pre-season drench
+MMO1,Ivomec Injection,8.5ml IM,2025-10-05,28,2025-11-02,Annual drenching — Meatmaster rams
+MMO1,Covexin 8,2ml SC,2025-09-20,0,,Annual booster
+MMO2,Ivomec Injection,8.0ml IM,2025-10-05,28,2025-11-02,Annual drenching
+MMO2,Covexin 8,2ml SC,2025-09-20,0,,Annual booster
+MMO3,Ivomec Injection,6.0ml IM,2025-10-05,28,2025-11-02,Annual drenching — Meatmaster ewes
+MMO3,Covexin 8,2ml SC,2025-09-20,0,,Annual booster
+MMO3,CIDR,1 unit intravaginal,2026-02-13,0,,7-day CIDR protocol — mating synchronisation
+MMO3,Lutalyse,2ml IM,2026-02-20,0,,CIDR removal — oestrus induction
+MMO4,Ivomec Injection,5.8ml IM,2025-10-05,28,2025-11-02,Annual drenching
+MMO4,Covexin 8,2ml SC,2025-09-20,0,,Annual booster
+MMO4,Multivitamin AD3E,3ml IM,2025-07-01,0,,Post-weaning supplement — twin — slightly light
+MR001,Ivomec Injection,10.2ml IM,2025-10-10,28,2025-11-07,Annual drenching — Merino mob
+MR001,Covexin 8,2ml SC,2025-09-25,0,,Annual booster
+MR001,Bytam,5ml IM,2026-01-15,0,,Liver support — post-breeding season conditioning
+MR002,Ivomec Injection,5.8ml IM,2025-10-10,28,2025-11-07,Annual drenching — Merino ewes
+MR002,Covexin 8,2ml SC,2025-09-25,0,,Annual booster
+MR002,Multivitamin AD3E,3ml IM,2025-12-20,0,,Pregnancy supplement — confirmed pregnant — twins expected
+MR003,Ivomec Injection,5.5ml IM,2025-10-10,28,2025-11-07,Annual drenching
+MR003,Covexin 8,2ml SC,2025-09-25,0,,Annual booster
+D007,Ivomec Injection,11.0ml IM,2025-10-01,28,2025-10-29,Annual drenching — Dorper sire
+D007,Covexin 8,2ml SC,2025-09-15,0,,Annual booster
+D007,Bytam,5ml IM,2026-01-10,0,,Post-season liver support — breeding season recovery
+MMO5,Ivomec Injection,10.8ml IM,2025-10-05,28,2025-11-02,Annual drenching — Meatmaster sire
+MMO5,Covexin 8,2ml SC,2025-09-20,0,,Annual booster
+MMO5,Bytam,5ml IM,2026-01-12,0,,Post-season liver support

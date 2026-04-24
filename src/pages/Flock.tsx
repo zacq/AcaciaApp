@@ -1,15 +1,22 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Animal, AnimalGroup, BornAs, BreedingClass, ImageSlot } from '../types';
 import {
   Plus, Search, ChevronRight, Users, X, Layers, Camera,
   ArrowLeft, CheckCircle2, AlertCircle
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import PageHeader from '../components/PageHeader';
 import { supabase } from '../supabase';
 
-type Tab = 'animals' | 'groups';
+type Tab = 'sheep' | 'beef' | 'goat' | 'groups';
+
+const SPECIES_TABS: { tab: Exclude<Tab, 'groups'>; label: string; species: string; emoji: string }[] = [
+  { tab: 'sheep', label: 'Sheep', species: 'Sheep',   emoji: '🐑' },
+  { tab: 'beef',  label: 'Beef',  species: 'Cattle',  emoji: '🐄' },
+  { tab: 'goat',  label: 'Goat',  species: 'Goat',    emoji: '🐐' },
+];
 
 const speciesList = ['Sheep', 'Goat', 'Cattle', 'Pig', 'Other'];
 const statusOptions = ['active', 'sold', 'dead', 'culled', 'archived'];
@@ -67,11 +74,11 @@ const emptyForm: AnimalFormState = {
   notes: '', status: 'active',
 };
 
-const healthColors: Record<string, string> = {
-  healthy: 'bg-green-50 text-green-700',
-  under_treatment: 'bg-amber-50 text-amber-700',
-  monitor: 'bg-blue-50 text-blue-700',
-  critical: 'bg-red-50 text-red-700',
+const healthDot: Record<string, string> = {
+  healthy: 'bg-green-500',
+  under_treatment: 'bg-amber-400',
+  monitor: 'bg-blue-400',
+  critical: 'bg-red-500',
 };
 
 // ─── Image slot state ────────────────────────────────────────────────────────
@@ -135,12 +142,14 @@ function AddAnimalPage({
   animals,
   onSave,
   onCancel,
+  defaultSpecies,
 }: {
   animals: Animal[];
   onSave: (form: AnimalFormState, images: Record<ImageSlot, SlotPreview>) => Promise<void>;
   onCancel: () => void;
+  defaultSpecies?: string;
 }) {
-  const [form, setForm] = useState<AnimalFormState>(emptyForm);
+  const [form, setForm] = useState<AnimalFormState>({ ...emptyForm, species: defaultSpecies ?? emptyForm.species });
   const [images, setImages] = useState<Record<ImageSlot, SlotPreview>>({ front: null, side: null, rear: null });
   const [saving, setSaving] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -444,18 +453,32 @@ function SectionTitle({ title, badge }: { title: string; badge?: string }) {
   );
 }
 
+function urlSpeciesToTab(s: string | null): Tab {
+  if (s === 'beef') return 'beef';
+  if (s === 'goat') return 'goat';
+  if (s === 'sheep') return 'sheep';
+  return 'sheep';
+}
+
 // ─── Main Flock Page ─────────────────────────────────────────────────────────
 export default function Flock() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [groups, setGroups] = useState<AnimalGroup[]>([]);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState<Tab>('animals');
+  const [tab, setTab] = useState<Tab>(() => urlSpeciesToTab(searchParams.get('species')));
   const [search, setSearch] = useState('');
   const [showAddAnimal, setShowAddAnimal] = useState(false);
   const [showAddGroup, setShowAddGroup] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const [groupForm, setGroupForm] = useState({ name: '', purpose: '', location: '' });
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    setSearch('');
+    setShowSearch(false);
+  }, [tab]);
 
   // Load animals + groups from Supabase
   useEffect(() => {
@@ -470,12 +493,16 @@ export default function Flock() {
     }).catch(() => setLoading(false));
   }, []);
 
-  const filteredAnimals = animals.filter(a =>
-    a.tag_number.toLowerCase().includes(search.toLowerCase()) ||
-    a.breed?.toLowerCase().includes(search.toLowerCase()) ||
-    a.species?.toLowerCase().includes(search.toLowerCase()) ||
-    a.name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const activeSpecies = SPECIES_TABS.find(t => t.tab === tab)?.species ?? 'Sheep';
+
+  const filteredAnimals = animals.filter(a => {
+    const matchesSpecies = a.species?.toLowerCase() === activeSpecies.toLowerCase();
+    const matchesSearch =
+      a.tag_number.toLowerCase().includes(search.toLowerCase()) ||
+      a.breed?.toLowerCase().includes(search.toLowerCase()) ||
+      a.name?.toLowerCase().includes(search.toLowerCase());
+    return matchesSpecies && (search === '' || matchesSearch);
+  });
 
   const handleAddAnimal = async (
     form: AnimalFormState,
@@ -571,130 +598,223 @@ export default function Flock() {
 
   return (
     <>
-      <div className="p-4 space-y-4 max-w-2xl mx-auto">
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium px-4 py-3 rounded-2xl">
-            {error}
-          </div>
-        )}
-        <PageHeader
-          title="My Flock"
-          backTo="/app/home"
-          action={
-            <button
-              onClick={() => tab === 'animals' ? setShowAddAnimal(true) : setShowAddGroup(true)}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary/20"
-            >
-              <Plus size={18} />
-              {tab === 'animals' ? 'Add Animal' : 'Add Group'}
-            </button>
-          }
-        />
-
-        {/* Tab switcher */}
-        <div className="flex bg-accent/30 p-1 rounded-2xl">
-          <button
-            onClick={() => setTab('animals')}
-            className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${tab === 'animals' ? 'bg-surface shadow-sm text-primary' : 'text-primary-light'}`}
-          >
-            All Animals ({animals.length})
-          </button>
-          <button
-            onClick={() => setTab('groups')}
-            className={`flex-1 py-2 rounded-xl font-bold text-sm transition-all ${tab === 'groups' ? 'bg-surface shadow-sm text-primary' : 'text-primary-light'}`}
-          >
-            Groups ({groups.length})
-          </button>
-        </div>
-
-        {tab === 'animals' && (
-          <>
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light/40" size={20} />
-              <input value={search} onChange={e => setSearch(e.target.value)}
-                type="text" placeholder="Search by tag, breed, name..." className="input-field pl-12" />
+      {/* ── Sticky header ─────────────────────────────────────────── */}
+      <div className="sticky top-[49px] z-20 bg-background border-b border-accent/50">
+        <div className="max-w-2xl mx-auto px-4 pt-4 pb-3 space-y-3">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm font-medium px-4 py-3 rounded-2xl">
+              {error}
             </div>
+          )}
 
-            <div className="space-y-3">
-              {loading ? (
-                [1, 2, 3].map(i => <div key={i} className="h-20 bg-accent/20 rounded-3xl animate-pulse" />)
-              ) : filteredAnimals.length === 0 ? (
-                <div className="text-center py-20 bg-surface rounded-[2.5rem] border border-dashed border-accent">
-                  <Users size={48} className="mx-auto text-accent mb-4" />
-                  <p className="text-primary-light font-medium">
-                    {search ? 'No animals match your search' : 'No animals yet'}
-                  </p>
-                  {!search && (
-                    <button onClick={() => setShowAddAnimal(true)}
-                      className="mt-4 text-primary font-bold flex items-center gap-2 mx-auto">
-                      <Plus size={20} /> Add your first animal
+          <PageHeader
+            title="My Flock"
+            backTo="/app/home"
+            action={
+              <button
+                onClick={() => tab === 'groups' ? setShowAddGroup(true) : setShowAddAnimal(true)}
+                className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary/20"
+              >
+                <Plus size={18} />
+                {tab === 'groups' ? 'Add Group' : 'Add Animal'}
+              </button>
+            }
+          />
+
+          {/* Tab bar + search toggle */}
+          <div className="flex items-center gap-2">
+            <div className="flex bg-accent/30 p-1 rounded-2xl flex-1 gap-0.5">
+              {SPECIES_TABS.map(({ tab: t, label, emoji }) => {
+                const count = animals.filter(a => a.species?.toLowerCase() === SPECIES_TABS.find(s => s.tab === t)!.species.toLowerCase()).length;
+                return (
+                  <button
+                    key={t}
+                    onClick={() => setTab(t)}
+                    className={`flex-1 py-1.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1 ${tab === t ? 'bg-surface shadow-sm text-primary' : 'text-primary-light'}`}
+                  >
+                    <span>{emoji}</span>
+                    <span className="hidden sm:inline text-xs">{label}</span>
+                    <span className="text-[10px] opacity-60">({count})</span>
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setTab('groups')}
+                className={`flex-1 py-1.5 rounded-xl font-bold text-xs transition-all ${tab === 'groups' ? 'bg-surface shadow-sm text-primary' : 'text-primary-light'}`}
+              >
+                Groups ({groups.length})
+              </button>
+            </div>
+            {tab !== 'groups' && (
+              <button
+                onClick={() => setShowSearch(s => !s)}
+                className={`p-2 rounded-xl transition-colors shrink-0 ${showSearch ? 'bg-primary text-white' : 'hover:bg-accent text-primary-light'}`}
+              >
+                <Search size={18} />
+              </button>
+            )}
+          </div>
+
+          {/* Collapsible search input */}
+          <AnimatePresence>
+            {showSearch && tab !== 'groups' && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.18 }}
+                className="overflow-hidden"
+              >
+                <div className="relative pb-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-light/40" size={16} />
+                  <input
+                    autoFocus
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    type="text"
+                    placeholder="Search by tag, breed, name…"
+                    className="input-field pl-9 pr-9 py-2 text-sm"
+                  />
+                  {search && (
+                    <button
+                      onClick={() => setSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-light/40 hover:text-primary-light"
+                    >
+                      <X size={16} />
                     </button>
                   )}
                 </div>
-              ) : (
-                filteredAnimals.map(animal => (
-                  <Link key={animal.id} to={`/app/flock/animals/${animal.id}`} state={{ animal }}
-                    className="card flex items-center justify-between group"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary font-bold text-sm">
-                        {animal.tag_number.slice(-3)}
-                      </div>
-                      <div>
-                        <h4 className="font-bold text-primary-dark">
-                          {animal.name || `Tag: ${animal.tag_number}`}
-                        </h4>
-                        <p className="text-xs text-primary-light font-medium uppercase tracking-wider">
-                          {animal.tag_number} · {animal.breed} · {animal.sex}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {animal.health_status && (
-                        <span className={`text-[10px] font-bold px-2 py-1 rounded-full capitalize hidden sm:block ${healthColors[animal.health_status] || 'bg-accent text-primary-light'}`}>
-                          {animal.health_status.replace('_', ' ')}
-                        </span>
-                      )}
-                      {animal.cull && (
-                        <span className="text-[10px] font-bold px-2 py-1 rounded-full bg-orange-100 text-orange-700 hidden sm:block">
-                          Cull
-                        </span>
-                      )}
-                      <ChevronRight size={20} className="text-accent group-hover:text-primary transition-colors" />
-                    </div>
-                  </Link>
-                ))
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── Scrollable content ────────────────────────────────────── */}
+      <div className="max-w-2xl mx-auto w-full px-4 pb-28">
+
+        {/* Species animal table */}
+        {tab !== 'groups' && (
+          loading ? (
+            <table className="w-full text-sm mt-2">
+              <tbody>
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <tr key={i} className="border-b border-accent/30">
+                    <td className="py-3 pr-3 w-20"><div className="h-4 w-14 bg-accent/40 rounded animate-pulse" /></td>
+                    <td className="py-3 pr-3"><div className="h-4 w-28 bg-accent/40 rounded animate-pulse" /></td>
+                    <td className="py-3 pr-3 hidden sm:table-cell"><div className="h-4 w-20 bg-accent/30 rounded animate-pulse" /></td>
+                    <td className="py-3 w-8"><div className="h-4 w-6 bg-accent/30 rounded animate-pulse mx-auto" /></td>
+                    <td className="py-3 w-6"><div className="w-2 h-2 bg-accent/40 rounded-full animate-pulse mx-auto" /></td>
+                    <td className="py-3 hidden md:table-cell w-16"><div className="h-4 w-12 bg-accent/30 rounded animate-pulse ml-auto" /></td>
+                    <td className="py-3 w-5" />
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : filteredAnimals.length === 0 ? (
+            <div className="text-center py-20 border border-dashed border-accent rounded-[2rem] mt-4">
+              <Users size={40} className="mx-auto text-accent mb-3" />
+              <p className="text-primary-light font-medium text-sm">
+                {search ? 'No animals match your search' : `No ${activeSpecies.toLowerCase()} recorded yet`}
+              </p>
+              {!search && (
+                <button onClick={() => setShowAddAnimal(true)}
+                  className="mt-3 text-primary font-bold flex items-center gap-2 mx-auto text-sm">
+                  <Plus size={18} /> Add your first {activeSpecies.toLowerCase()}
+                </button>
               )}
             </div>
-          </>
+          ) : (
+            <table className="w-full text-sm mt-2">
+              <thead>
+                <tr className="border-b-2 border-accent text-[10px] uppercase tracking-wider text-primary-light/50 font-bold">
+                  <th className="py-2 text-left pr-3">Tag</th>
+                  <th className="py-2 text-left pr-3">Name</th>
+                  <th className="py-2 text-left pr-3 hidden sm:table-cell">Breed</th>
+                  <th className="py-2 text-center w-8">Sex</th>
+                  <th className="py-2 text-center w-8">Health</th>
+                  <th className="py-2 text-right hidden md:table-cell w-16">Weight</th>
+                  <th className="w-5" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-accent/30">
+                {filteredAnimals.map(animal => (
+                  <tr
+                    key={animal.id}
+                    onClick={() => navigate(`/app/flock/animals/${animal.id}`, { state: { animal } })}
+                    className="cursor-pointer hover:bg-accent/20 active:bg-accent/40 transition-colors"
+                  >
+                    <td className="py-2.5 pr-3">
+                      <span className="font-mono text-[11px] font-bold text-primary bg-accent/50 px-1.5 py-0.5 rounded whitespace-nowrap">
+                        {animal.tag_number}
+                      </span>
+                    </td>
+                    <td className="py-2.5 pr-3">
+                      <span className="font-semibold text-primary-dark text-[13px] leading-tight">
+                        {animal.name || '—'}
+                      </span>
+                      <span className="sm:hidden block text-[10px] text-primary-light/60 leading-tight mt-0.5">
+                        {animal.breed}
+                      </span>
+                      {animal.cull && (
+                        <span className="sm:hidden text-[9px] font-bold text-orange-600 ml-1">CULL</span>
+                      )}
+                    </td>
+                    <td className="py-2.5 pr-3 text-primary-light text-xs hidden sm:table-cell">
+                      {animal.breed}
+                      {animal.cull && <span className="ml-1.5 text-[9px] font-bold text-orange-600">CULL</span>}
+                    </td>
+                    <td className="py-2.5 text-center">
+                      <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${animal.sex === 'male' ? 'bg-blue-50 text-blue-700' : 'bg-pink-50 text-pink-700'}`}>
+                        {animal.sex === 'male' ? 'M' : 'F'}
+                      </span>
+                    </td>
+                    <td className="py-2.5 text-center">
+                      <span
+                        className={`inline-block w-2.5 h-2.5 rounded-full ${healthDot[animal.health_status ?? ''] ?? 'bg-accent'}`}
+                        title={animal.health_status ?? ''}
+                      />
+                    </td>
+                    <td className="py-2.5 text-right text-xs text-primary-light hidden md:table-cell">
+                      {animal.weight_kg != null ? `${animal.weight_kg} kg` : '—'}
+                    </td>
+                    <td className="py-2.5 pl-1">
+                      <ChevronRight size={15} className="text-accent" />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )
         )}
 
+        {/* Groups list */}
         {tab === 'groups' && (
-          <div className="space-y-3">
+          <div className="space-y-3 mt-4">
             {groups.length === 0 ? (
-              <div className="text-center py-20 bg-surface rounded-[2.5rem] border border-dashed border-accent">
-                <Layers size={48} className="mx-auto text-accent mb-4" />
-                <p className="text-primary-light font-medium">No groups created yet</p>
+              <div className="text-center py-20 border border-dashed border-accent rounded-[2rem]">
+                <Layers size={40} className="mx-auto text-accent mb-3" />
+                <p className="text-primary-light font-medium text-sm">No groups created yet</p>
                 <button onClick={() => setShowAddGroup(true)}
-                  className="mt-4 text-primary font-bold flex items-center gap-2 mx-auto">
-                  <Plus size={20} /> Create first group
+                  className="mt-3 text-primary font-bold flex items-center gap-2 mx-auto text-sm">
+                  <Plus size={18} /> Create first group
                 </button>
               </div>
             ) : (
               groups.map(group => (
                 <div key={group.id} className="card flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                      <Layers size={22} className="text-primary" />
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Layers size={20} className="text-primary" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-primary-dark">{group.name}</h4>
+                      <h4 className="font-bold text-primary-dark text-sm">{group.name}</h4>
                       <p className="text-xs text-primary-light">
                         {group.location && `${group.location} · `}{group.purpose || 'No purpose set'}
                       </p>
                     </div>
                   </div>
-                  <ChevronRight size={20} className="text-accent" />
+                  <ChevronRight size={18} className="text-accent" />
                 </div>
               ))
             )}
@@ -751,6 +871,7 @@ export default function Flock() {
             animals={animals}
             onSave={handleAddAnimal}
             onCancel={() => setShowAddAnimal(false)}
+            defaultSpecies={activeSpecies}
           />
         )}
       </AnimatePresence>

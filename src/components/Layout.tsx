@@ -20,6 +20,8 @@ import {
   Baby,
   Scan,
   Scissors,
+  Weight,
+  Heart,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../contexts/AuthContext';
@@ -65,6 +67,8 @@ export default function Layout() {
         { icon: Baby, label: 'Lambing', path: '/app/lambing' },
         { icon: Scan, label: 'Pregnancy Scans', path: '/app/pregnancy-scans' },
         { icon: Scissors, label: 'Weaning', path: '/app/weaning' },
+        { icon: Weight, label: 'Performance', path: '/app/performance' },
+        { icon: Heart, label: 'Breeding', path: '/app/breeding' },
       ]
     },
     {

@@ -1,0 +1,46 @@
+animal_tag,weight_kg,recorded_at,age_days,condition_score,notes
+D001,78.5,2025-03-10,59,3.0,Birth weight not recorded — first weigh at 59 days
+D001,88.0,2025-06-10,150,3.5,Mid-season weigh — good ADG
+D001,92.0,2026-01-10,365,3.5,Annual weigh — 12 months
+D002,80.0,2025-03-15,59,3.0,First weigh at 59 days
+D002,90.0,2025-06-15,151,3.5,Mid-season weigh
+D002,95.0,2026-01-15,365,4.0,Annual weigh — top performer
+D003,72.0,2025-04-10,61,3.0,First weigh — twin — good for age
+D003,82.0,2025-07-10,151,3.5,Mid-season weigh
+D003,88.0,2026-02-08,365,3.5,Annual weigh
+D004,58.0,2025-03-22,61,3.0,First weigh — twin ewe
+D004,64.0,2025-06-22,152,3.0,Mid-season weigh
+D004,68.0,2026-01-20,365,3.0,Annual weigh
+D005,60.0,2025-04-16,61,3.0,First weigh — single ewe
+D005,66.0,2025-07-16,152,3.5,Mid-season weigh
+D005,72.0,2026-02-14,365,3.5,Annual weigh — pregnant — good condition
+D006,55.0,2025-05-01,61,2.5,First weigh — twin — slightly light
+D006,60.0,2025-08-01,153,3.0,Mid-season weigh — catching up
+D006,65.0,2026-03-01,365,3.0,Annual weigh
+MMO1,62.0,2024-09-12,62,3.0,First weigh — Meatmaster ram
+MMO1,74.0,2024-12-12,153,3.5,Mid-season weigh
+MMO1,85.0,2026-01-12,549,3.5,Latest weigh — strong condition
+MMO2,58.0,2024-10-05,61,2.5,First weigh — twin — good
+MMO2,70.0,2025-01-05,153,3.0,Mid-season weigh
+MMO2,80.0,2026-02-05,549,3.0,Latest weigh
+MMO3,48.0,2024-11-18,61,2.5,First weigh — Meatmaster ewe
+MMO3,54.0,2025-02-18,153,3.0,Mid-season weigh
+MMO3,60.0,2026-03-18,549,3.0,Latest weigh — bred
+MMO4,46.0,2024-12-02,61,2.5,First weigh — twin — slightly behind
+MMO4,52.0,2025-03-02,152,2.5,Mid-season — supplement started
+MMO4,58.0,2026-04-02,549,2.5,Latest weigh — still on supplement
+MR001,88.0,2023-06-15,61,3.5,First weigh — Merino ram
+MR001,95.0,2023-09-15,153,3.5,Mid-season weigh
+MR001,102.0,2026-03-15,1065,4.0,Latest weigh — senior sire in top condition
+MR002,48.0,2023-07-20,61,3.0,First weigh — Merino ewe twin
+MR002,54.0,2023-10-20,153,3.0,Mid-season weigh
+MR002,58.0,2026-03-20,1035,3.0,Latest weigh — pregnant
+MR003,45.0,2024-05-10,61,2.5,First weigh — Merino ewe
+MR003,50.0,2024-08-10,153,3.0,Mid-season weigh
+MR003,55.0,2026-04-10,762,3.0,Latest weigh — first mating season
+D007,98.0,2023-08-20,61,3.5,First weigh — Dorper sire
+D007,105.0,2023-12-20,184,4.0,Post-season conditioning
+D007,110.0,2026-03-20,1004,4.0,Latest weigh — prime breeding condition
+MMO5,96.0,2023-10-14,61,3.5,First weigh — Meatmaster sire
+MMO5,103.0,2024-02-14,184,4.0,Post-season conditioning
+MMO5,108.0,2026-04-14,974,4.0,Latest weigh — excellent condition

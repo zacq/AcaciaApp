@@ -1,0 +1,16 @@
+name,active_ingredient,category,unit,withdrawal_days,stock_quantity,reorder_level,expiry_date,notes
+Ivomec Injection,Ivermectin 1%,Antiparasitic,ml,28,500,100,30/06/2027,Broad-spectrum endectocide — 1ml per 50kg LW
+Dectomax,Doramectin 1%,Antiparasitic,ml,35,300,80,31/03/2027,Long-acting injectable — pour-on also available
+Multivitamin AD3E,Vitamins A D3 E,Supplement,ml,0,200,50,31/12/2026,Boost for weaned lambs and stressed animals
+Terramycin LA,Oxytetracycline 200mg/ml,Antibiotic,ml,21,150,40,30/09/2026,Long-acting — respiratory and systemic infections
+Penicillin G,Procaine Penicillin,Antibiotic,ml,7,200,50,31/08/2026,Foot rot and wound infections
+Covexin 8,Clostridial 8-way,Vaccine,ml,0,100,30,30/11/2026,Annual vaccination — 2ml subcutaneous
+Rift Valley Fever Vaccine,RVF live attenuated,Vaccine,ml,0,80,20,31/07/2026,Compulsory in RVF zones — 1ml subcutaneous
+Lutalyse,Dinoprost tromethamine,Reproductive,ml,0,50,10,31/10/2026,Prostaglandin — synchronise oestrus
+CIDR,Progesterone device,Reproductive,unit,0,30,10,31/01/2027,Intravaginal progesterone — 7-day protocol
+Zinc Sulphate 10%,Zinc Sulphate,Supplement,L,0,20,5,30/06/2027,Footbath solution — 10% dilution
+Tribexen,Albendazole 2.5%,Anthelmintic,ml,14,400,100,31/12/2026,Oral drench — broad-spectrum wormer
+Closamectin,Closantel + Ivermectin,Antiparasitic,ml,42,250,60,30/04/2027,Combined fluke and worm treatment
+Bytam,Butaphosphan + B12,Supplement,ml,0,100,25,30/11/2026,Liver tonic and energy support
+Flunixin,Flunixin Meglumine,Anti-inflammatory,ml,5,80,20,30/09/2026,NSAID — pain and fever — post-lambing
+Dexamethasone,Dexamethasone 2mg/ml,Anti-inflammatory,ml,3,60,15,31/08/2026,Corticosteroid — inflammation and shock

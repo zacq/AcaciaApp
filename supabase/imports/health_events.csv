@@ -1,0 +1,33 @@
+animal_tag,event_type,diagnosis,severity,event_date,resolved_date,vet_name,notes
+D001,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual Covexin 8 booster — whole Dorper mob
+D001,checkup,Annual breeding soundness evaluation,low,2025-10-05,,DR. PIETER VAN ZYL,Passed BSE — libido score 3/3 — sperm motility 87%
+D002,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster
+D002,checkup,Breeding soundness evaluation,low,2025-10-05,,DR. PIETER VAN ZYL,Passed BSE — excellent sperm quality — recommended primary sire
+D003,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster
+D003,checkup,Breeding soundness evaluation,low,2025-10-05,,DR. PIETER VAN ZYL,Passed BSE — suitable for backup sire duty
+D004,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster — Dorper ewes
+D004,checkup,Pre-mating fertility assessment,low,2025-12-10,,DR. ANRI BOTHA,Reproductively sound — good uterine tone — Breeding Group A
+D005,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster
+D005,checkup,Pregnancy confirmation scan,low,2026-01-20,,DR. ANRI BOTHA,Single foetus confirmed — 8 weeks gestation — lambing due 2026-04-10
+D005,checkup,Late pregnancy check,low,2026-03-15,,DR. ANRI BOTHA,Foetus large and active — dam in good condition — no intervention needed
+D006,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster
+D006,illness,Internal parasites — elevated FEC,medium,2025-08-10,2025-09-01,DR. PIETER VAN ZYL,FAMACHA score 3 — drenched with Tribexen — FEC recheck clear
+MMO1,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-20,,DR. PIETER VAN ZYL,Annual booster — Meatmaster rams
+MMO1,checkup,Annual breeding soundness evaluation,low,2025-10-10,,DR. PIETER VAN ZYL,Passed BSE — worm-resistant line confirmed — recommended stud ram
+MMO2,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-20,,DR. PIETER VAN ZYL,Annual booster
+MMO2,checkup,Breeding soundness evaluation,low,2025-10-10,,DR. PIETER VAN ZYL,Passed BSE — suitable for commercial mating
+MMO3,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-20,,DR. PIETER VAN ZYL,Annual booster — Meatmaster ewes
+MMO3,checkup,Pre-mating fertility assessment,low,2026-02-01,,DR. ANRI BOTHA,CIDR protocol planned — synchronised mating group
+MMO3,checkup,Post-mating check,low,2026-03-20,,DR. ANRI BOTHA,Bred 2026-02-20 — rescan April to confirm pregnancy
+MMO4,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-20,,DR. PIETER VAN ZYL,Annual booster
+MMO4,checkup,Nutrition assessment,low,2025-07-01,,DR. PIETER VAN ZYL,Below target weight — supplement programme initiated — twin management
+MR001,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-25,,DR. PIETER VAN ZYL,Annual booster — Merino mob
+MR001,checkup,Annual senior sire health check,low,2025-10-15,,DR. PIETER VAN ZYL,Heart and joints sound — passed BSE — light workload recommended
+MR002,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-25,,DR. PIETER VAN ZYL,Annual booster
+MR002,checkup,Pregnancy confirmation scan,low,2026-01-25,,DR. ANRI BOTHA,Twin foetuses confirmed — first pregnancy — excellent placentation
+MR003,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-25,,DR. PIETER VAN ZYL,Annual booster
+MR003,checkup,Pre-mating assessment,low,2026-01-10,,DR. ANRI BOTHA,Reproductively sound — first mating season — Merino Breeding Group
+D007,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-15,,DR. PIETER VAN ZYL,Annual booster — Dorper sire
+D007,checkup,Annual breeding soundness evaluation,low,2025-10-02,,DR. PIETER VAN ZYL,Passed BSE — outstanding sperm quality — primary Dorper sire approved
+MMO5,vaccination,Clostridial 8-way booster — Covexin 8,low,2025-09-20,,DR. PIETER VAN ZYL,Annual booster — Meatmaster sire
+MMO5,checkup,Annual breeding soundness evaluation,low,2025-10-08,,DR. PIETER VAN ZYL,Passed BSE — primary Meatmaster sire approved for 2026 season

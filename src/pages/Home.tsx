@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   Stethoscope, Activity, BarChart3, Users, ArrowLeftRight,
   Baby, Scan, Scissors, ClipboardList
 } from 'lucide-react';
 import { motion } from 'motion/react';
-import { supabase } from '../supabase';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -19,21 +18,35 @@ const quickActions = [
   { icon: Scissors,    label: 'Weaning',         path: '/app/weaning',          color: 'text-amber-600',  bg: 'bg-amber-50' },
 ];
 
+const modules = [
+  {
+    label: 'Acacia Sheep',
+    emoji: '🐑',
+    bg: 'bg-emerald-50',
+    border: 'border-emerald-200',
+    text: 'text-emerald-800',
+    path: '/app/flock?species=sheep',
+  },
+  {
+    label: 'Acacia Beef',
+    emoji: '🐄',
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-800',
+    path: '/app/flock?species=beef',
+  },
+  {
+    label: 'Acacia Goat',
+    emoji: '🐐',
+    bg: 'bg-stone-50',
+    border: 'border-stone-300',
+    text: 'text-stone-700',
+    path: '/app/flock?species=goat',
+  },
+];
+
 export default function Home() {
   const { profile } = useAuth();
-  const [animalCount, setAnimalCount] = useState<number>(0);
-  const [loadingCount, setLoadingCount] = useState(true);
-
-  useEffect(() => {
-    supabase
-      .from('animals')
-      .select('id', { count: 'exact', head: true })
-      .eq('status', 'active')
-      .then(({ count }) => {
-        setAnimalCount(count ?? 0);
-        setLoadingCount(false);
-      });
-  }, []);
 
   return (
     <div className="p-6 max-w-4xl mx-auto space-y-8">
@@ -44,20 +57,33 @@ export default function Home() {
           animate={{ scale: 1, opacity: 1 }}
           className="inline-block mb-4"
         >
-          <div className="relative">
-            <img src="/logo.png" alt="AcaciaVelds Logo"
-              className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-surface" />
-            <div className="absolute -top-2 -right-2 bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm border-4 border-background">
-              {loadingCount ? '…' : animalCount}
-            </div>
-          </div>
+          <img src="/logo.png" alt="AcaciaVelds Logo"
+            className="w-24 h-24 rounded-full object-cover shadow-lg border-4 border-surface" />
         </motion.div>
-        <h2 className="text-3xl font-serif text-primary mb-1">
-          {loadingCount ? '…' : animalCount} animals in flock
-        </h2>
-        <p className="text-primary-light font-medium">
+        <p className="text-primary-light font-medium mb-6">
           {profile?.full_name ? `Welcome, ${profile.full_name.split(' ')[0]}` : 'AcaciaVeld Ranch Operations'}
         </p>
+
+        {/* Module icons */}
+        <div className="flex justify-center gap-6">
+          {modules.map((mod, i) => (
+            <motion.div
+              key={mod.label}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.08 }}
+            >
+              <Link to={mod.path} className="flex flex-col items-center gap-2 group">
+                <div className={`w-20 h-20 rounded-full border-2 ${mod.bg} ${mod.border} flex items-center justify-center text-4xl shadow-sm transition-transform group-hover:scale-105 group-active:scale-95`}>
+                  {mod.emoji}
+                </div>
+                <span className={`text-xs font-bold uppercase tracking-wider ${mod.text}`}>
+                  {mod.label}
+                </span>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
       </section>
 
       {/* Quick Actions */}

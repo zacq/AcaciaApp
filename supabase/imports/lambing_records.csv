@@ -1,0 +1,8 @@
+dam_tag,sire_tag,lambing_date,num_born,num_alive,difficulty,notes
+D004,D007,2025-03-11,1,1,easy,Single ram lamb — good birth weight — strong suckle reflex — pedigree D250007
+D005,D007,2025-03-11,1,1,easy,Single ewe lamb — born unassisted — excellent dam temperament — pedigree D250008
+MMO3,MMO5,2025-03-28,1,1,easy,Single Meatmaster ewe — born unassisted — well-pigmented — pedigree MM250005
+MR002,MR001,2025-03-16,2,2,easy,Twin ewe lambs — both strong — good birth weights — pedigree MR250001 and MR250002
+D004,D210001,2024-02-20,1,1,easy,Previous season single — dam D004 first lambing — sire not on current system
+D005,D210001,2024-03-01,2,1,assisted,Twin birth — second lamb stillborn — first lamb strong — recorded in system
+MR002,MR200001,2024-04-10,2,2,easy,Twin lambs — both females — strong birth weights — sire from MR200001 previous stud

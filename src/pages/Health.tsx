@@ -1,158 +1,338 @@
-import React, { useState } from 'react';
-import { Plus, Activity, AlertTriangle, CheckCircle, Clock, ChevronRight, Search } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Plus, Search, X, ChevronRight, Activity, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
+import { motion, AnimatePresence } from 'motion/react';
 import PageHeader from '../components/PageHeader';
+import { supabase } from '../supabase';
+import { Animal } from '../types';
 
-type HealthEvent = {
+type SpeciesTab = 'sheep' | 'beef' | 'goat';
+
+const SPECIES_TABS: { tab: SpeciesTab; label: string; species: string; emoji: string }[] = [
+  { tab: 'sheep', label: 'Sheep', species: 'Sheep',  emoji: '🐑' },
+  { tab: 'beef',  label: 'Beef',  species: 'Cattle', emoji: '🐄' },
+  { tab: 'goat',  label: 'Goat',  species: 'Goat',   emoji: '🐐' },
+];
+
+type HealthRecord = {
   id: string;
-  animal_tag: string;
+  animal_id: string;
   event_type: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  symptoms: string;
-  status: 'open' | 'monitoring' | 'resolved';
-  date: string;
+  diagnosis?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  event_date: string;
+  resolved_date?: string;
+  vet_name?: string;
   notes?: string;
+  created_at: string;
+  animal?: { id: string; tag_number: string; name?: string; species: string; breed: string };
 };
 
-const eventTypes = ['Health Assessment', 'Injury', 'Disease Observation', 'Mortality', 'Vet Recommendation', 'Recovery Check'];
+const eventTypes = ['Health Assessment', 'Illness', 'Injury', 'Vaccination', 'Disease Observation', 'Mortality', 'Recovery Check', 'Vet Recommendation'];
 const severities = ['low', 'medium', 'high', 'critical'] as const;
 
-const severityColors: Record<HealthEvent['severity'], string> = {
-  low: 'bg-green-50 text-green-700',
-  medium: 'bg-amber-50 text-amber-700',
-  high: 'bg-orange-50 text-orange-700',
-  critical: 'bg-red-50 text-red-700',
+const severityDot: Record<string, string> = {
+  low: 'bg-green-500', medium: 'bg-amber-400', high: 'bg-orange-500', critical: 'bg-red-600',
+};
+const severityBadge: Record<string, string> = {
+  low: 'bg-green-50 text-green-700', medium: 'bg-amber-50 text-amber-700',
+  high: 'bg-orange-50 text-orange-700', critical: 'bg-red-50 text-red-700',
 };
 
-const statusIcons: Record<HealthEvent['status'], React.ReactNode> = {
-  open: <AlertTriangle size={16} className="text-red-500" />,
-  monitoring: <Clock size={16} className="text-amber-500" />,
-  resolved: <CheckCircle size={16} className="text-green-500" />,
-};
-
-const mockEvents: HealthEvent[] = [];
+const fmtDate = (d: string) =>
+  new Date(d).toLocaleDateString('en-ZA', { day: '2-digit', month: 'short', year: '2-digit' });
 
 export default function Health() {
-  const [tab, setTab] = useState<'list' | 'add'>('list');
+  const [records, setRecords] = useState<HealthRecord[]>([]);
+  const [animals, setAnimals] = useState<Animal[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [speciesTab, setSpeciesTab] = useState<SpeciesTab>('sheep');
   const [search, setSearch] = useState('');
+  const [showSearch, setShowSearch] = useState(false);
+  const [showSheet, setShowSheet] = useState(false);
   const [form, setForm] = useState({
-    animal_tag: '', event_type: 'Health Assessment', severity: 'medium' as HealthEvent['severity'],
-    symptoms: '', status: 'open' as HealthEvent['status'],
-    date: format(new Date(), 'yyyy-MM-dd'), notes: '',
+    animal_id: '', event_type: 'Health Assessment',
+    severity: 'medium' as typeof severities[number],
+    diagnosis: '', vet_name: '',
+    event_date: format(new Date(), 'yyyy-MM-dd'), notes: '',
   });
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
-  const filtered = mockEvents.filter(e =>
-    e.animal_tag.toLowerCase().includes(search.toLowerCase()) ||
-    e.event_type.toLowerCase().includes(search.toLowerCase())
+  useEffect(() => {
+    Promise.all([
+      supabase
+        .from('health_events')
+        .select('*, animal:animals(id, tag_number, name, species, breed)')
+        .order('event_date', { ascending: false }),
+      supabase
+        .from('animals')
+        .select('id, tag_number, name, species, breed, sex')
+        .eq('status', 'active')
+        .order('tag_number'),
+    ]).then(([recRes, anRes]) => {
+      setRecords((recRes.data as HealthRecord[]) ?? []);
+      setAnimals((anRes.data as Animal[]) ?? []);
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => { setSearch(''); setShowSearch(false); }, [speciesTab]);
+
+  const activeSpecies = SPECIES_TABS.find(t => t.tab === speciesTab)!.species;
+
+  const speciesRecords = records.filter(
+    r => r.animal?.species?.toLowerCase() === activeSpecies.toLowerCase()
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const filtered = search
+    ? speciesRecords.filter(r =>
+        r.animal?.tag_number.toLowerCase().includes(search.toLowerCase()) ||
+        r.event_type.toLowerCase().includes(search.toLowerCase()) ||
+        r.diagnosis?.toLowerCase().includes(search.toLowerCase()) ||
+        r.animal?.name?.toLowerCase().includes(search.toLowerCase())
+      )
+    : speciesRecords;
+
+  const speciesAnimals = animals.filter(a => a.species?.toLowerCase() === activeSpecies.toLowerCase());
+  const speciesCount = (sp: string) =>
+    records.filter(r => r.animal?.species?.toLowerCase() === sp.toLowerCase()).length;
+
+  const openSheet = () => {
+    setForm({
+      animal_id: '', event_type: 'Health Assessment', severity: 'medium',
+      diagnosis: '', vet_name: '', event_date: format(new Date(), 'yyyy-MM-dd'), notes: '',
+    });
+    setError('');
+    setShowSheet(true);
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert('Health event logged! (Supabase integration pending)');
-    setTab('list');
+    if (!form.animal_id) { setError('Please select an animal'); return; }
+    setSaving(true); setError('');
+    const { data, error: err } = await supabase
+      .from('health_events')
+      .insert({
+        animal_id: form.animal_id,
+        event_type: form.event_type,
+        severity: form.severity,
+        diagnosis: form.diagnosis || null,
+        vet_name: form.vet_name || null,
+        event_date: form.event_date,
+        notes: form.notes || null,
+      })
+      .select('*, animal:animals(id, tag_number, name, species, breed)')
+      .single();
+    setSaving(false);
+    if (err) { setError(err.message); return; }
+    setRecords(prev => [data as HealthRecord, ...prev]);
+    setShowSheet(false);
   };
 
   return (
-    <div className="p-4 space-y-4 max-w-2xl mx-auto">
-      <PageHeader
-        title="Health"
-        action={
-          <button
-            onClick={() => setTab(tab === 'add' ? 'list' : 'add')}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary/20"
-          >
-            <Plus size={18} />
-            {tab === 'add' ? 'Cancel' : 'Log Event'}
-          </button>
-        }
-      />
-
-      {tab === 'add' ? (
-        <form onSubmit={handleSubmit} className="card space-y-4">
-          <h3 className="font-serif font-bold text-primary text-lg border-b border-accent pb-3">New Health Event</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Animal Tag *</label>
-              <input required className="input-field" placeholder="e.g. A-0042" value={form.animal_tag}
-                onChange={e => setForm({ ...form, animal_tag: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Date *</label>
-              <input required type="date" className="input-field" value={form.date}
-                onChange={e => setForm({ ...form, date: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Event Type</label>
-              <select className="input-field" value={form.event_type}
-                onChange={e => setForm({ ...form, event_type: e.target.value })}>
-                {eventTypes.map(t => <option key={t}>{t}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Severity</label>
-              <select className="input-field" value={form.severity}
-                onChange={e => setForm({ ...form, severity: e.target.value as HealthEvent['severity'] })}>
-                {severities.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-              </select>
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Symptoms / Observations *</label>
-              <textarea required rows={3} className="input-field resize-none" placeholder="Describe symptoms or observations..."
-                value={form.symptoms} onChange={e => setForm({ ...form, symptoms: e.target.value })} />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Status</label>
-              <select className="input-field" value={form.status}
-                onChange={e => setForm({ ...form, status: e.target.value as HealthEvent['status'] })}>
-                <option value="open">Open</option>
-                <option value="monitoring">Monitoring</option>
-                <option value="resolved">Resolved</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Notes</label>
-              <input className="input-field" placeholder="Additional notes..." value={form.notes}
-                onChange={e => setForm({ ...form, notes: e.target.value })} />
-            </div>
-          </div>
-          <button type="submit" className="btn-primary w-full py-4 shadow-lg shadow-primary/20">Save Health Event</button>
-        </form>
-      ) : (
-        <>
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light/40" size={20} />
-            <input value={search} onChange={e => setSearch(e.target.value)}
-              type="text" placeholder="Search by tag or event type..." className="input-field pl-12" />
-          </div>
-
-          {filtered.length === 0 ? (
-            <div className="text-center py-20 bg-surface rounded-[2.5rem] border border-dashed border-accent">
-              <Activity size={48} className="mx-auto text-accent mb-4" />
-              <p className="text-primary-light font-medium">No health events recorded</p>
-              <button onClick={() => setTab('add')} className="mt-4 text-primary font-bold flex items-center gap-2 mx-auto">
-                <Plus size={20} /> Log first event
+    <>
+      {/* ── Sticky header ─────────────────────────────────────────── */}
+      <div className="sticky top-[49px] z-20 bg-background border-b border-accent/50">
+        <div className="max-w-2xl mx-auto px-4 pt-4 pb-3 space-y-3">
+          <PageHeader
+            title="Health"
+            action={
+              <button onClick={openSheet}
+                className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl font-bold text-sm shadow-lg shadow-primary/20">
+                <Plus size={18} /> Log Event
               </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {filtered.map(e => (
-                <div key={e.id} className="card flex items-center gap-4">
-                  <div className="shrink-0">{statusIcons[e.status]}</div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-primary-dark">Tag: {e.animal_tag}</p>
-                    <p className="text-sm text-primary-light">{e.event_type}</p>
-                    <p className="text-xs text-primary-light/60 mt-0.5">{format(new Date(e.date), 'dd/MM/yyyy')}</p>
-                  </div>
-                  <span className={`text-xs font-bold px-2 py-1 rounded-full capitalize shrink-0 ${severityColors[e.severity]}`}>
-                    {e.severity}
-                  </span>
-                  <ChevronRight size={18} className="text-accent shrink-0" />
-                </div>
+            }
+          />
+          <div className="flex items-center gap-2">
+            <div className="flex bg-accent/30 p-1 rounded-2xl flex-1 gap-0.5">
+              {SPECIES_TABS.map(({ tab, label, species, emoji }) => (
+                <button key={tab} onClick={() => setSpeciesTab(tab)}
+                  className={`flex-1 py-1.5 rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-1 ${speciesTab === tab ? 'bg-surface shadow-sm text-primary' : 'text-primary-light'}`}>
+                  <span>{emoji}</span>
+                  <span className="hidden sm:inline text-xs">{label}</span>
+                  <span className="text-[10px] opacity-60">({speciesCount(species)})</span>
+                </button>
               ))}
             </div>
-          )}
-        </>
-      )}
-    </div>
+            <button onClick={() => setShowSearch(s => !s)}
+              className={`p-2 rounded-xl transition-colors shrink-0 ${showSearch ? 'bg-primary text-white' : 'hover:bg-accent text-primary-light'}`}>
+              <Search size={18} />
+            </button>
+          </div>
+          <AnimatePresence>
+            {showSearch && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.18 }} className="overflow-hidden">
+                <div className="relative pb-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-light/40" size={16} />
+                  <input autoFocus value={search} onChange={e => setSearch(e.target.value)}
+                    placeholder="Search by tag, event type…" className="input-field pl-9 pr-9 py-2 text-sm" />
+                  {search && (
+                    <button onClick={() => setSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-primary-light/40 hover:text-primary-light">
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
+
+      {/* ── Scrollable content ────────────────────────────────────── */}
+      <div className="max-w-2xl mx-auto w-full px-4 pb-28">
+        {loading ? (
+          <table className="w-full text-sm mt-2"><tbody>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <tr key={i} className="border-b border-accent/30">
+                <td className="py-3 w-20"><div className="h-4 w-14 bg-accent/40 rounded animate-pulse" /></td>
+                <td className="py-3 pr-3"><div className="h-4 w-20 bg-accent/40 rounded animate-pulse" /></td>
+                <td className="py-3 pr-3"><div className="h-4 w-32 bg-accent/30 rounded animate-pulse" /></td>
+                <td className="py-3 w-6"><div className="w-2.5 h-2.5 bg-accent/40 rounded-full animate-pulse mx-auto" /></td>
+                <td className="py-3 w-6"><div className="w-4 h-4 bg-accent/30 rounded animate-pulse mx-auto" /></td>
+                <td className="py-3 w-5" />
+              </tr>
+            ))}
+          </tbody></table>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 border border-dashed border-accent rounded-[2rem] mt-4">
+            <Activity size={40} className="mx-auto text-accent mb-3" />
+            <p className="text-primary-light font-medium text-sm">
+              {search ? 'No events match your search' : `No health events for ${activeSpecies.toLowerCase()}`}
+            </p>
+            {!search && (
+              <button onClick={openSheet} className="mt-3 text-primary font-bold flex items-center gap-2 mx-auto text-sm">
+                <Plus size={18} /> Log first event
+              </button>
+            )}
+          </div>
+        ) : (
+          <table className="w-full text-sm mt-2">
+            <thead className="sticky top-[160px] z-10 bg-background">
+              <tr className="border-b-2 border-accent text-[10px] uppercase tracking-wider text-primary-light/50 font-bold">
+                <th className="py-2 text-left pr-3 w-20">Date</th>
+                <th className="py-2 text-left pr-3">Animal</th>
+                <th className="py-2 text-left pr-3">Event</th>
+                <th className="py-2 text-center w-8">Sev</th>
+                <th className="py-2 text-center w-8">Status</th>
+                <th className="w-5" />
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-accent/30">
+              {filtered.map(r => (
+                <tr key={r.id} className="hover:bg-accent/20 transition-colors">
+                  <td className="py-2.5 pr-3 text-[11px] text-primary-light whitespace-nowrap">
+                    {fmtDate(r.event_date)}
+                  </td>
+                  <td className="py-2.5 pr-3">
+                    <span className="font-mono text-[11px] font-bold text-primary bg-accent/50 px-1.5 py-0.5 rounded">
+                      {r.animal?.tag_number ?? '—'}
+                    </span>
+                    {r.animal?.name && (
+                      <span className="block text-[10px] text-primary-light/60 mt-0.5">{r.animal.name}</span>
+                    )}
+                  </td>
+                  <td className="py-2.5 pr-3">
+                    <span className="font-semibold text-primary-dark text-[13px]">{r.event_type}</span>
+                    {r.diagnosis && (
+                      <span className="block text-[10px] text-primary-light/60 mt-0.5 truncate max-w-[160px]">{r.diagnosis}</span>
+                    )}
+                  </td>
+                  <td className="py-2.5 text-center">
+                    <span className={`inline-block w-2.5 h-2.5 rounded-full ${severityDot[r.severity ?? ''] ?? 'bg-accent'}`}
+                      title={r.severity ?? ''} />
+                  </td>
+                  <td className="py-2.5 text-center">
+                    {r.resolved_date
+                      ? <CheckCircle size={14} className="text-green-500 mx-auto" />
+                      : <AlertTriangle size={14} className="text-amber-500 mx-auto" />}
+                  </td>
+                  <td className="py-2.5 pl-1"><ChevronRight size={15} className="text-accent" /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* ── Add bottom sheet ──────────────────────────────────────── */}
+      <AnimatePresence>
+        {showSheet && (
+          <>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              onClick={() => setShowSheet(false)}
+              className="fixed inset-0 bg-primary-dark/40 backdrop-blur-sm z-40" />
+            <motion.div initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-[2rem] z-50 max-h-[90vh] overflow-y-auto">
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl font-serif font-bold text-primary">New Health Event</h3>
+                  <button onClick={() => setShowSheet(false)} className="p-2 hover:bg-accent rounded-xl">
+                    <X size={22} className="text-primary-light" />
+                  </button>
+                </div>
+                <form onSubmit={handleSave} className="space-y-4 pb-6">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Animal *</label>
+                      <select className="input-field" value={form.animal_id}
+                        onChange={e => setForm({ ...form, animal_id: e.target.value })}>
+                        <option value="">Select {activeSpecies.toLowerCase()}…</option>
+                        {speciesAnimals.map(a => (
+                          <option key={a.id} value={a.id}>{a.tag_number}{a.name ? ` — ${a.name}` : ''}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Date *</label>
+                      <input type="date" required className="input-field" value={form.event_date}
+                        onChange={e => setForm({ ...form, event_date: e.target.value })} />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Severity</label>
+                      <select className="input-field" value={form.severity}
+                        onChange={e => setForm({ ...form, severity: e.target.value as typeof severities[number] })}>
+                        {severities.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Event Type</label>
+                      <select className="input-field" value={form.event_type}
+                        onChange={e => setForm({ ...form, event_type: e.target.value })}>
+                        {eventTypes.map(t => <option key={t}>{t}</option>)}
+                      </select>
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Diagnosis / Symptoms</label>
+                      <input className="input-field" placeholder="e.g. Respiratory infection, limping…" value={form.diagnosis}
+                        onChange={e => setForm({ ...form, diagnosis: e.target.value })} />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Vet / Staff</label>
+                      <input className="input-field" placeholder="Name of attending vet or staff" value={form.vet_name}
+                        onChange={e => setForm({ ...form, vet_name: e.target.value })} />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-primary-light uppercase tracking-wider mb-1">Notes</label>
+                      <textarea rows={2} className="input-field resize-none" placeholder="Additional observations…"
+                        value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+                    </div>
+                  </div>
+                  {error && <p className="text-sm text-red-600 font-medium">{error}</p>}
+                  <button type="submit" disabled={saving}
+                    className="btn-primary w-full py-4 shadow-lg shadow-primary/20 flex items-center justify-center gap-2">
+                    {saving && <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />}
+                    {saving ? 'Saving…' : 'Save Event'}
+                  </button>
+                </form>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }

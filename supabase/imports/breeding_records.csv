@@ -1,0 +1,12 @@
+dam_tag,sire_tag,mating_date,method,expected_birth,outcome,notes
+D004,D007,2026-01-20,natural,2026-06-16,pending,Breeding Group A — natural mating — Camp 2
+D005,D007,2025-11-10,natural,2026-04-06,confirmed_pregnant,Confirmed pregnant Jan scan — single — lambing due 2026-04-10
+D006,D007,2026-02-01,natural,2026-06-28,pending,Breeding Group A — second cycle attempt
+MMO3,MMO5,2026-02-20,AI,2026-07-17,pending,AI with chilled semen from MMO5 — CIDR synchronised
+MMO4,MMO5,2026-02-20,natural,2026-07-17,pending,Mating Group B — run with MMO5
+MR002,MR001,2025-11-20,natural,2026-04-16,confirmed_pregnant,Confirmed pregnant — twins confirmed Jan scan
+MR003,MR001,2026-01-10,natural,2026-06-06,pending,First mating — Merino Breeding Group
+D004,D007,2024-10-15,natural,2025-03-11,lambed,Previous season — produced single ram lamb
+D005,D007,2024-10-15,natural,2025-03-11,lambed,Previous season — produced single ewe lamb
+MMO3,MMO5,2024-11-01,natural,2025-03-28,lambed,Previous season — produced single Meatmaster ewe
+MR002,MR001,2024-10-20,natural,2025-03-16,lambed,Previous season — produced twin ewes

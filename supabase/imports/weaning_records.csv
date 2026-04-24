@@ -1,0 +1,16 @@
+animal_tag,weaning_date,weaning_weight,dam_tag,notes
+D001,2025-05-10,32.5,D220001,Weaned at 120 days — twin — above average weaning weight — Dorper
+D002,2025-05-15,35.0,D220002,Weaned at 120 days — single — excellent growth — top Dorper ram lamb
+D003,2025-06-08,30.0,D220003,Weaned at 120 days — twin — good growth for twin
+D004,2025-05-20,26.5,D220004,Weaned at 120 days — twin ewe — slightly lighter than average
+D005,2025-06-14,29.0,D220005,Weaned at 120 days — single ewe — good weaning weight
+D006,2025-07-01,24.0,D220006,Weaned at 122 days — twin ewe — lighter twin — supplement provided
+MMO1,2024-11-10,28.0,MM220001,Weaned at 121 days — single — Meatmaster — good weaning weight
+MMO2,2024-12-05,25.5,MM220002,Weaned at 122 days — twin — Meatmaster — reasonable weight for twin
+MMO3,2025-01-18,23.0,MM220003,Weaned at 122 days — single Meatmaster ewe
+MMO4,2026-02-02,21.0,MM220004,Weaned at 123 days — twin — slightly light — supplement continued post-weaning
+MR001,2023-08-15,36.0,MR200001,Weaned at 122 days — single Merino ram — strong weaning weight
+MR002,2023-09-20,28.0,MR200001,Weaned at 123 days — twin Merino ewe
+MR003,2024-07-10,25.5,MR200003,Weaned at 122 days — single Merino ewe — first weaning from this dam
+D007,2023-10-20,40.0,D200001,Weaned at 122 days — single Dorper ram — exceptional weaning weight — primary sire candidate
+MMO5,2023-12-14,38.5,MM200001,Weaned at 122 days — single Meatmaster ram — top weaning weight in batch
